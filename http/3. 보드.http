@@ -1,5 +1,5 @@
 ### 3-1. USER : 보드 생성
-POST http://localhost:8080/api/manager/boards
+POST http://localhost:8080/api/boards
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -10,11 +10,34 @@ Authorization: Bearer {{access_token}}
 
 ### 3-2. 보드 수정
 
-PUT http://localhost:8080/api/manager/boards/2
+PUT http://localhost:8080/api/boards/1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 {
   "title": "테스트2",
   "intro" : "내용 테스트2"
+}
+
+### 3-3. 보드 삭제
+
+DELETE http://localhost:8080/api/boards/2
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 3-4. 보드 조회
+
+GET http://localhost:8080/api/boards?page=1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
+### 3-5. 보드 초대
+
+POST http://localhost:8080/api/boards/1/invite
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "invitedUserId": 2
 }
