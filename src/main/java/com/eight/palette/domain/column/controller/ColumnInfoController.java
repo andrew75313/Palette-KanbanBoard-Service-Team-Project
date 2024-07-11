@@ -39,10 +39,10 @@ public class ColumnInfoController {
 
     }
 
-    @PostMapping("/manager/boards/{boardId}/columns/{columnsId}/order")
+    @PostMapping("/manager/boards/{boardId}/columns/{columnsId}/move")
     public ResponseEntity<MessageResponse> moveColumn(@PathVariable(name = "boardId") Long boardId,
                                                       @PathVariable(name = "columnsId") Long columnInfoId,
-                                                      @RequestParam(name = "newOrder") Integer newOrder,
+                                                      @RequestParam(name = "order") Integer newOrder,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         columnInfoService.moveColumn(boardId, columnInfoId, newOrder, userDetails.getUser());
