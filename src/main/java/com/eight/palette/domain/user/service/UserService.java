@@ -3,7 +3,6 @@ package com.eight.palette.domain.user.service;
 import com.eight.palette.domain.user.dto.LoginRequestDto;
 import com.eight.palette.domain.user.dto.LoginResponseDto;
 import com.eight.palette.domain.user.dto.UserRequestDto;
-import com.eight.palette.domain.user.dto.UserResponseDto;
 import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.domain.user.entity.UserRoleEnum;
 import com.eight.palette.domain.user.repository.UserRepository;
@@ -31,7 +30,7 @@ public class UserService {
     @Value("${custom.manage-key}")
     private String customManageKey;
 
-    public UserResponseDto signup(UserRequestDto requestDto) {
+    public void signup(UserRequestDto requestDto) {
 
         if (isUserExist(requestDto.getUsername())) {
             throw new BadRequestException("동일한 회원이 존재 합니다.");
@@ -48,8 +47,6 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-
-        return new UserResponseDto(user);
 
     }
 
@@ -69,6 +66,20 @@ public class UserService {
 
         return new LoginResponseDto(accessToken, refreshToken, user.getUsername());
 
+    }
+
+    public LoginResponseDto tokenRefresh(String refreshToken) {
+
+        if (!jwtProvider.validateRefreshToken(refreshToken)) {
+            throw new BadRequestException("유효하지 않은 토큰 입니다 재로그인 해주세요.");
+        }
+
+        final String username = jwtProvider.getUsernameFromToken(refreshToken);
+        final String accessToken = jwtProvider.createAccessToken(username);
+        final String refreshTokenValue = jwtProvider.createRefreshToken(username);
+
+        return new LoginResponseDto(accessToken, refreshTokenValue, username);
+        
     }
 
     public void logout(Long id, User user) {

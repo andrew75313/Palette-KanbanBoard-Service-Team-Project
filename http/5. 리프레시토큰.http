@@ -1,0 +1,8 @@
+### 5-1. 리프레시 토큰
+POST http://localhost:8080/api/users/logout/1
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  
+}
