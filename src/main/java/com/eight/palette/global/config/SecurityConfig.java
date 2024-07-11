@@ -35,7 +35,7 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers("/api/users/signup").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
-                        .requestMatchers("/api/manager/**").hasAuthority("MANAGER")
+                        .requestMatchers("/api/boards/**").hasAuthority("MANAGER")
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

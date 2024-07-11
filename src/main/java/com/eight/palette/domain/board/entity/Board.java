@@ -21,7 +21,6 @@ public class Board extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id")
     private Long id;
 
     @Column(nullable = false)
@@ -34,6 +33,23 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
+    public enum Status {
+        ACTIVE,
+        DELETED;
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
+
+    public boolean isActive() {
+        return this.status == Status.ACTIVE;
+    }
+
     public void update(String title, String intro) {
         this.title = title;
         this.intro = intro;
@@ -41,6 +57,5 @@ public class Board extends Timestamped {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invite> invites = new ArrayList<>();
-
 
 }

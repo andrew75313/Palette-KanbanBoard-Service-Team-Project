@@ -10,7 +10,7 @@ Authorization: Bearer {{access_token}}
 
 ### 3-2. 보드 수정
 
-PUT http://localhost:8080/api/boards/1
+PUT http://localhost:8080/api/boards/3
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -21,7 +21,7 @@ Authorization: Bearer {{access_token}}
 
 ### 3-3. 보드 삭제
 
-DELETE http://localhost:8080/api/boards/2
+DELETE http://localhost:8080/api/boards/3
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -34,7 +34,7 @@ Authorization: Bearer {{access_token}}
 
 ### 3-5. 보드 초대
 
-POST http://localhost:8080/api/boards/1/invite
+POST http://localhost:8080/api/boards/2/invite
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

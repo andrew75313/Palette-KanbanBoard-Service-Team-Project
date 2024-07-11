@@ -7,6 +7,7 @@ import com.eight.palette.domain.board.repository.BoardRepository;
 import com.eight.palette.domain.invite.Repository.InviteRepository;
 import com.eight.palette.domain.invite.entity.Invite;
 import com.eight.palette.domain.user.entity.User;
+import com.eight.palette.domain.user.entity.UserRoleEnum;
 import com.eight.palette.domain.user.repository.UserRepository;
 import com.eight.palette.global.exception.BadRequestException;
 import org.springframework.data.domain.Page;
@@ -31,10 +32,15 @@ public class BoardService {
 
     public BoardResponseDto createBoard(User user, BoardRequestDto requestDto) {
 
+        if (user.getRole() != UserRoleEnum.MANAGER) {
+            throw new BadRequestException("보드를 생성할 권한이 없습니다.");
+        }
+
         Board board = Board.builder()
                 .user(user)
                 .title(requestDto.getTitle())
                 .intro(requestDto.getIntro())
+                .status(Board.Status.ACTIVE)
                 .build();
 
         boardRepository.save(board);
@@ -46,6 +52,10 @@ public class BoardService {
     @Transactional
     public BoardResponseDto updateBoard(User user, Long boardId, BoardRequestDto requestDto) {
 
+        if (user.getRole() != UserRoleEnum.MANAGER) {
+            throw new BadRequestException("보드를 수정할 권한이 없습니다.");
+        }
+
         Board board = getBoards(user, boardId);
         board.update(requestDto.getTitle(), requestDto.getIntro());
         return new BoardResponseDto(board);
@@ -54,8 +64,18 @@ public class BoardService {
 
     public void deleteBoard(User user, Long boardId) {
 
+        if (user.getRole() != UserRoleEnum.MANAGER) {
+            throw new BadRequestException("보드를 삭제할 권한이 없습니다.");
+        }
+
         Board board = getBoards(user, boardId);
-        boardRepository.delete(board);
+
+        if (board.getStatus() == Board.Status.DELETED) {
+            throw new BadRequestException("이미 삭제된 보드입니다.");
+        }
+
+        board.delete();
+        boardRepository.save(board);
 
     }
 
@@ -63,7 +83,7 @@ public class BoardService {
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Board> boardPage = boardRepository.findAllByOrderByCreatedAtDesc(pageable);
+        Page<Board> boardPage = boardRepository.findAllByStatusOrderByCreatedAtDesc(Board.Status.ACTIVE,pageable);
         return boardPage.map(BoardResponseDto::new);
 
     }
@@ -95,6 +115,11 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(()
                 -> new BadRequestException("보드를 찾을 수 없습니다.")
         );
+
+        if (board.getStatus() == Board.Status.DELETED) {
+            throw new BadRequestException("이미 삭제된 보드입니다.");
+        }
+
         if (!board.getUser().getId().equals(user.getId())) {
             throw new BadRequestException("다른 사용자의 보드입니다.");
         }
