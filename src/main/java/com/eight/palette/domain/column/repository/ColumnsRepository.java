@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ColumnsRepository extends JpaRepository<ColumnInfo, Long> {
 
     List<ColumnInfo> findByBoardId(Long boardId);
+    List<ColumnInfo> findByBoardIdOrderByPosition(Long boardId);
 }

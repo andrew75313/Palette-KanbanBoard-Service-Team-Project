@@ -115,15 +115,22 @@ public class ColumnInfoService {
             return;
         }
 
+        List<ColumnInfo> columnList = columnsRepository.findByBoardIdOrderByPosition(boardId);
+
+        newPosition = newPosition > columnList.size() ? columnList.size() : newPosition;
+
         foundColumn.updatePosition(newPosition);
 
-        List<ColumnInfo> columnList = columnsRepository.findByBoardId(boardId);
-
+        Integer position = 1;
         for (ColumnInfo column : columnList) {
-            Integer order = column.getPosition();
+            if (!column.getId().equals(foundColumn.getId())) {
+                if (position == newPosition) {
+                    position++;
+                }
 
-            if (order >= newPosition) {
-                column.updatePosition(order + 1);
+                column.updatePosition(position);
+
+                position++;
             }
         }
 
