@@ -1,0 +1,20 @@
+### 4-1. 컬럼 생성
+POST http://localhost:8080/api/manager/boards/1/columns
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "status": "상태이름테스트2"
+}
+
+### 4-2. 컬럼 삭제
+DELETE http://localhost:8080/api/manager/boards/1/columns/4
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 4-3. 컬럼 이동
+POST http://localhost:8080/api/manager/boards/1/columns/3/move?position=1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+
