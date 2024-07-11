@@ -10,6 +10,7 @@ import com.eight.palette.domain.column.repository.ColumnsRepository;
 import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.domain.user.repository.UserRepository;
 import com.eight.palette.global.exception.BadRequestException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,40 @@ public class ColumnInfoService {
 
     }
 
+    @Transactional
+    public void moveColumn(Long boardId, Long columnInfoId, Integer newOrder, User user) {
+
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
+                () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
+        );
+
+        validateBoardOwnership(boardId, foundUser);
+
+        ColumnInfo foundColumn = columnsRepository.findById(columnInfoId).orElseThrow(
+                () -> new BadRequestException("해당 컬럼은 존재하지 않습니다.")
+        );
+
+        if (foundColumn.getBoard().getId() != boardId) {
+            throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
+        }
+
+        if (foundColumn.getOrder() == newOrder) {
+            return;
+        }
+
+        foundColumn.updateOrder(newOrder);
+
+        List<ColumnInfo> columnList = columnsRepository.findByBoardId(boardId);
+
+        for (ColumnInfo column : columnList) {
+            Integer order = column.getOrder();
+
+            if (order > newOrder) {
+                column.updateOrder(order + 1);
+            }
+        }
+
+    }
 
     public Board validateBoardOwnership(Long boardId, User user) {
 

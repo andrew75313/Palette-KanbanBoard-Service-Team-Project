@@ -39,4 +39,17 @@ public class ColumnInfoController {
 
     }
 
+    @PostMapping("/manager/boards/{boardId}/columns/{columnsId}/order")
+    public ResponseEntity<MessageResponse> moveColumn(@PathVariable(name = "boardId") Long boardId,
+                                                      @PathVariable(name = "columnsId") Long columnInfoId,
+                                                      @RequestParam(name = "newOrder") Integer newOrder,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        columnInfoService.moveColumn(boardId, columnInfoId, newOrder, userDetails.getUser());
+
+        return ResponseEntity.status(200).body(new MessageResponse(200, "컬럼 순서 변경 성공 \uD83C\uDF89"));
+
+    }
+
+
 }
