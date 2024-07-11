@@ -36,3 +36,5 @@ jwt:
     token:
       expiration: ${REFRESH_TOKEN_EXPIRATION}
 
+custom:
+  manage-key: ${MANAGER_KEY}
