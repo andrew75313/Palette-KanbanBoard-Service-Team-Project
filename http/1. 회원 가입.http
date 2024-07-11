@@ -3,10 +3,17 @@ POST http://localhost:8080/api/users/signup
 Content-Type: application/json
 
 {
-  "username" : "username12",
-  "password" : "password!!",
-  "managerKey": "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"
+  "username" : "username",
+  "password" : "password"
 }
 
 
+### 1-2. 회원가입
+POST http://localhost:8080/api/users/signup
+Content-Type: application/json
 
+{
+  "username" : "username16",
+  "password" : "password16!",
+  "managerKey" : "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"
+}
