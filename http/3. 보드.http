@@ -1,0 +1,20 @@
+### 3-1. USER : 보드 생성
+POST http://localhost:8080/api/manager/boards
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "title": "테스트",
+  "intro" : "내용 테스트"
+}
+
+### 3-2. 보드 수정
+
+PUT http://localhost:8080/api/manager/boards/14
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "title": "테스트2",
+  "intro" : "내용 테스트2"
+}
