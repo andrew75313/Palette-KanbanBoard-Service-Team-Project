@@ -1,0 +1,5 @@
+### 4-1. 로그아웃
+POST http://localhost:8080/api/users/logout/1
+Authorization: Bearer {{access_token}}
+
+

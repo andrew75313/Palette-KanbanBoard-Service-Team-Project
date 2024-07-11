@@ -4,10 +4,11 @@ Content-Type: application/json
 
 {
   "username": "username",
-  "password": "password"
+  "password": "password!!"
 }
 
 > {%
-    client.global.set("access_token", response.body.data.token);
+    client.global.set("access_token", response.body.data.accessToken);
+
 %}
 

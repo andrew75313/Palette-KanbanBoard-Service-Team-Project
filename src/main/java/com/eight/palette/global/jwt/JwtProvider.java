@@ -38,6 +38,7 @@ public class JwtProvider {
     public String createRefreshToken(String username) {
         return generateToken(username, refreshTokenExpiration);
     }
+
     public String generateToken(String username, long expiration) {
         return Jwts.builder()
                 .setSubject(username) // 토큰 주체
@@ -69,15 +70,6 @@ public class JwtProvider {
             return true;
         } catch (Exception e) {
             return false;
-        }
-    }
-
-    public String refreshToken(String refreshToken) {
-        if (validateRefreshToken(refreshToken)) {
-            String username = getUsernameFromToken(refreshToken);
-            return createAccessToken(username);
-        } else {
-            throw new IllegalArgumentException("Refresh token이 만료 또는 유효하지 않음");
         }
     }
 

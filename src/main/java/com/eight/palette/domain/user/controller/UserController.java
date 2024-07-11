@@ -2,6 +2,7 @@ package com.eight.palette.domain.user.controller;
 
 import com.eight.palette.domain.user.dto.LoginRequestDto;
 import com.eight.palette.domain.user.dto.LoginResponseDto;
+import com.eight.palette.domain.user.dto.RefreshTokenDto;
 import com.eight.palette.domain.user.dto.UserRequestDto;
 import com.eight.palette.domain.user.entity.UserDetailsImpl;
 import com.eight.palette.domain.user.service.UserService;
@@ -27,7 +28,7 @@ public class UserController {
 
         userService.signup(requestDto);
 
-        return ResponseEntity.ok(new MessageResponse(201, "회원가입에 성공 하셨습니다."));
+        return ResponseEntity.ok(new MessageResponse(201, "회원 가입 성공 \uD83C\uDF20"));
 
     }
 
@@ -35,7 +36,7 @@ public class UserController {
     public ResponseEntity<DataResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto requestDto) {
 
         return ResponseEntity.ok
-                (new DataResponse<>(200, "로그인에 성공 하셨습니다.", userService.login(requestDto)));
+                (new DataResponse<>(200, "로그인 성공 \uD83C\uDF89", userService.login(requestDto)));
 
     }
 
@@ -45,7 +46,17 @@ public class UserController {
 
         userService.logout(id,userDetails.getUser());
 
-        return ResponseEntity.ok(new MessageResponse(204, "로그아웃에 성공 하셨습니다."));
+        return ResponseEntity.ok(new MessageResponse(204, "로그아웃 성공 \uD83C\uDF89"));
+
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<DataResponse<LoginResponseDto>> tokenRefresh (@Valid @RequestBody RefreshTokenDto refreshTokenDto){
+
+        LoginResponseDto responseDto = userService.tokenRefresh(refreshTokenDto.getRefreshToken());
+
+        return ResponseEntity.ok(new DataResponse<>
+                (200, "재 로그인 성공 \uD83C\uDF89",responseDto));
 
     }
 
