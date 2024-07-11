@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class BoardService {
 
@@ -79,21 +81,41 @@ public class BoardService {
 
     }
 
-    public Page<BoardResponseDto> getBoard(int page, int size) {
+    public Page<BoardResponseDto> getBoard(User user, int page, int size) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Board> boardPage = boardRepository.findAllByStatusOrderByCreatedAtDesc(Board.Status.ACTIVE,pageable);
+
+        Page<Board> boardPage;
+        if (user.getRole() == UserRoleEnum.MANAGER) {
+            boardPage = boardRepository.findAllByStatusOrderByCreatedAtDesc(Board.Status.ACTIVE, pageable);
+        }  else {
+            List<Long> invitedBoardIds = inviteRepository.findAllByInvitedUserId(user.getId()).stream()
+                    .map(invite -> invite.getBoard().getId())
+                    .toList();
+
+            boardPage = boardRepository.findByStatusAndIdIn(Board.Status.ACTIVE, invitedBoardIds, pageable);
+        }
+
         return boardPage.map(BoardResponseDto::new);
 
     }
 
     @Transactional
     public void inviteBoard(User inviter, Long boardId, Long invitedUserId) {
+
+        if (inviter.getRole() != UserRoleEnum.MANAGER) {
+            throw new BadRequestException("보드에 초대 권한이 없습니다.");
+        }
+
         Board board = getBoards(inviter, boardId);
 
         User invitedUser = userRepository.findById(invitedUserId)
                 .orElseThrow(() -> new BadRequestException("초대할 사용자를 찾을 수 없습니다."));
+
+        if (inviter.getId().equals(invitedUser.getId())) {
+            throw new BadRequestException("본인을 초대할 수 없습니다.");
+        }
 
         for (Invite invite : board.getInvites()) {
             if (invite.getInvitedUser().equals(invitedUser)) {
@@ -107,7 +129,6 @@ public class BoardService {
                 .build();
 
         inviteRepository.save(invite);
-
     }
 
     public Board getBoards(User user, Long boardId) {

@@ -58,14 +58,16 @@ public class BoardController {
 
     }
 
-    @GetMapping("/boards")
-    public ResponseEntity<DataResponse<Page<BoardResponseDto>>> getBoard( @RequestParam(defaultValue = "1") int page) {
+    @GetMapping("/check/boards")
+    public ResponseEntity<DataResponse<Page<BoardResponseDto>>> getBoard(@RequestParam(defaultValue = "1") int page,
+                                                                         @AuthenticationPrincipal UserDetailsImpl userPrincipal) {
 
         int defaultSize = 5;
-        Page<BoardResponseDto> responseDto = boardService.getBoard(page - 1, defaultSize);
+        Page<BoardResponseDto> responseDto = boardService.getBoard(userPrincipal.getUser(), page - 1, defaultSize);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new DataResponse<>(HttpStatus.OK.value(), "보드 "+page+"번 페이지 조회 성공 📝", responseDto));
     }
+
 
     @PostMapping("boards/{boardId}/invite")
     public ResponseEntity<MessageResponse> inviteBoard( @AuthenticationPrincipal UserDetailsImpl userPrincipal,

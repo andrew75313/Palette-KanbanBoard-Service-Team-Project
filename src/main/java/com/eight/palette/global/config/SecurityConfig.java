@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/signup").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/api/boards/**").hasAuthority("MANAGER")
+                        .requestMatchers("/api/check/boards/**").authenticated()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
