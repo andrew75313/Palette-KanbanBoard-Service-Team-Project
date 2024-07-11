@@ -6,9 +6,8 @@ import lombok.Getter;
 @Getter
 public class UserResponseDto {
 
-    private String username;
-
-    private String password;
+    private final String username;
+    private final String password;
 
     public UserResponseDto(User user) {
 

@@ -28,4 +28,7 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
 }
