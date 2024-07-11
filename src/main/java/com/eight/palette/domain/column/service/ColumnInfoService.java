@@ -136,6 +136,35 @@ public class ColumnInfoService {
 
     }
 
+    @Transactional
+    public void setupInitialColumns(Board board) {
+
+        ColumnInfo upcomingColumn = ColumnInfo.builder()
+                .status(RequiredStatus.UPCOMING.getColumnStatus())
+                .position(1)
+                .board(board)
+                .build();
+
+        columnsRepository.save(upcomingColumn);
+
+        ColumnInfo inProgressColumn = ColumnInfo.builder()
+                .status(RequiredStatus.IN_PROGRESS.getColumnStatus())
+                .position(2)
+                .board(board)
+                .build();
+
+        columnsRepository.save(inProgressColumn);
+
+        ColumnInfo doneColumn = ColumnInfo.builder()
+                .status(RequiredStatus.DONE.getColumnStatus())
+                .position(3)
+                .board(board)
+                .build();
+
+        columnsRepository.save(doneColumn);
+
+    }
+
     public Board validateBoardOwnership(Long boardId, User user) {
 
         Board foundBoard = boardRepository.findById(boardId).orElseThrow(
