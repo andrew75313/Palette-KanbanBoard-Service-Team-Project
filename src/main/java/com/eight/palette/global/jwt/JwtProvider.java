@@ -73,15 +73,6 @@ public class JwtProvider {
         }
     }
 
-    public String refreshToken(String refreshToken) {
-        if (validateRefreshToken(refreshToken)) {
-            String username = getUsernameFromToken(refreshToken);
-            return createAccessToken(username);
-        } else {
-            throw new IllegalArgumentException("Refresh token이 만료 또는 유효하지 않음");
-        }
-    }
-
     private boolean isTokenExpired(String token) {
         final Date expiration = extractClaims(token).getExpiration();
         return expiration.before(new Date());
