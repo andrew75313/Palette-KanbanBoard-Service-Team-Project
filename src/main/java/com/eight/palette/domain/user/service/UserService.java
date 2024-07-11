@@ -55,7 +55,7 @@ public class UserService {
         final User user = userRepository.findByUsername(requestDto.getUsername())
                 .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
 
-        final String accessToken = jwtProvider.createAccessToken(user.getUsername());
+        final String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole());
         final String refreshToken = jwtProvider.createRefreshToken(user.getUsername());
 
         userRepository.setTokenValue(user.getId(), refreshToken);
@@ -73,13 +73,16 @@ public class UserService {
         if (!jwtProvider.validateRefreshToken(refreshToken)) {
             throw new BadRequestException("유효하지 않은 토큰 입니다 재로그인 해주세요.");
         }
-
         final String username = jwtProvider.getUsernameFromToken(refreshToken);
-        final String accessToken = jwtProvider.createAccessToken(username);
+
+        final User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new BadRequestException("해당유저가 없습니다."));
+
+        final String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole());
         final String refreshTokenValue = jwtProvider.createRefreshToken(username);
 
         return new LoginResponseDto(accessToken, refreshTokenValue, username);
-        
+
     }
 
     public void logout(Long id, User user) {
