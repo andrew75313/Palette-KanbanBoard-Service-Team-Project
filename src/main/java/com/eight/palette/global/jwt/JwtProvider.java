@@ -38,6 +38,7 @@ public class JwtProvider {
     public String createRefreshToken(String username) {
         return generateToken(username, refreshTokenExpiration);
     }
+
     public String generateToken(String username, long expiration) {
         return Jwts.builder()
                 .setSubject(username) // 토큰 주체

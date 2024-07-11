@@ -9,5 +9,6 @@ Content-Type: application/json
 
 > {%
     client.global.set("access_token", response.body.data.token);
+
 %}
 
