@@ -8,4 +8,12 @@ Content-Type: application/json
 }
 
 
+### 1-2. 회원가입
+POST http://localhost:8080/api/users/signup
+Content-Type: application/json
 
+{
+  "username" : "username16",
+  "password" : "password16!",
+  "managerKey" : "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"
+}
