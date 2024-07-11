@@ -10,7 +10,7 @@ Authorization: Bearer {{access_token}}
 
 ### 3-2. 보드 수정
 
-PUT http://localhost:8080/api/manager/boards/14
+PUT http://localhost:8080/api/manager/boards/2
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
