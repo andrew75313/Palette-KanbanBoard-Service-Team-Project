@@ -5,12 +5,13 @@ import lombok.Getter;
 @Getter
 public class LoginResponseDto {
 
-    private String token;
+    private final String accessToken;
+    private final String refreshToken;
+    private final String username;
 
-    private String username;
-
-    public LoginResponseDto(String token, String username) {
-        this.token = token;
+    public LoginResponseDto(String accessToken, String refreshToken, String username) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.username = username;
     }
 
