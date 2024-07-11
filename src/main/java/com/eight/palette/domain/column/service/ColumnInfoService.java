@@ -57,6 +57,8 @@ public class ColumnInfoService {
 
         ColumnInfo columnInfo = new ColumnInfo(columnInfoResponseDto, foundBoard);
 
+        columnInfo.updatePosition(foundColumnStatuses.size() + 1);
+
         columnsRepository.save(columnInfo);
 
         return new ColumnInfoResponseDto(columnInfo);
@@ -93,7 +95,7 @@ public class ColumnInfoService {
     }
 
     @Transactional
-    public void moveColumn(Long boardId, Long columnInfoId, Integer newOrder, User user) {
+    public void moveColumn(Long boardId, Long columnInfoId, Integer newPosition, User user) {
 
         User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
@@ -109,19 +111,19 @@ public class ColumnInfoService {
             throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
         }
 
-        if (foundColumn.getOrder() == newOrder) {
+        if (foundColumn.getPosition() == newPosition) {
             return;
         }
 
-        foundColumn.updateOrder(newOrder);
+        foundColumn.updatePosition(newPosition);
 
         List<ColumnInfo> columnList = columnsRepository.findByBoardId(boardId);
 
         for (ColumnInfo column : columnList) {
-            Integer order = column.getOrder();
+            Integer order = column.getPosition();
 
-            if (order > newOrder) {
-                column.updateOrder(order + 1);
+            if (order >= newPosition) {
+                column.updatePosition(order + 1);
             }
         }
 

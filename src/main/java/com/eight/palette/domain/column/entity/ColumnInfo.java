@@ -28,7 +28,7 @@ public class ColumnInfo extends Timestamped {
     private String status;
 
     @Column
-    private Integer order;
+    private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
@@ -43,9 +43,9 @@ public class ColumnInfo extends Timestamped {
         this.board = board;
     }
 
-    public void updateOrder(Integer newOrder) {
+    public void updatePosition(Integer newOrder) {
 
-        this.order = newOrder;
+        this.position = newOrder;
     }
 
 }
