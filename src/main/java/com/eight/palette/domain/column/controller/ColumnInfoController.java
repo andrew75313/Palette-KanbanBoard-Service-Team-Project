@@ -28,4 +28,15 @@ public class ColumnInfoController {
 
     }
 
+    @DeleteMapping("/manager/boards/{boardId}/columns/{columnsId}")
+    public ResponseEntity<MessageResponse> deleteColumn(@PathVariable(name = "boardId") Long boardId,
+                                                        @PathVariable(name = "columnsId") Long columnInfoId,
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        columnInfoService.deleteColumn(boardId, columnInfoId, userDetails.getUser());
+
+        return ResponseEntity.status(200).body(new MessageResponse(200, "컬럼 삭제 성공 \uD83C\uDF89"));
+
+    }
+
 }

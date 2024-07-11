@@ -62,6 +62,36 @@ public class ColumnInfoService {
 
     }
 
+    public void deleteColumn(Long boardId, Long columnInfoId, User user) {
+
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
+                () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
+        );
+
+        validateBoardOwnership(boardId, foundUser);
+
+        ColumnInfo foundColumn = columnsRepository.findById(columnInfoId).orElseThrow(
+                () -> new BadRequestException("해당 컬럼은 존재하지 않습니다.")
+        );
+
+        if (foundColumn.getBoard().getId() != boardId) {
+            throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
+        }
+
+        Set<String> requiredStatuses = new HashSet<>();
+        requiredStatuses.add(RequiredStatus.UPCOMING.getColumnStatus());
+        requiredStatuses.add(RequiredStatus.IN_PROGRESS.getColumnStatus());
+        requiredStatuses.add(RequiredStatus.DONE.getColumnStatus());
+
+        if (requiredStatuses.contains(foundColumn.getStatus())) {
+            throw new BadRequestException("필수 컬럼은 삭제할 수 없습니다.");
+        }
+
+        columnsRepository.delete(foundColumn);
+
+    }
+
+
     public Board validateBoardOwnership(Long boardId, User user) {
 
         Board foundBoard = boardRepository.findById(boardId).orElseThrow(
