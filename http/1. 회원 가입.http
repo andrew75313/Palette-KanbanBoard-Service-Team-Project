@@ -3,8 +3,9 @@ POST http://localhost:8080/api/users/signup
 Content-Type: application/json
 
 {
-  "username" : "username1",
-  "password" : "password!!"
+  "username" : "username12",
+  "password" : "password!!",
+  "managerKey": "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC"
 }
 
 
