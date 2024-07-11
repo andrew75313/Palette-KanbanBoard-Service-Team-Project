@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Builder
@@ -17,6 +20,7 @@ public class Board extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
     private Long id;
 
     @Column(nullable = false)
@@ -29,4 +33,8 @@ public class Board extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public void update(String title, String intro) {
+        this.title = title;
+        this.intro = intro;
+    }
 }
