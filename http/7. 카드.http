@@ -1,0 +1,49 @@
+### 7-1. 카드 생성
+POST http://localhost:8080/api/column/3/cards
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "title": "카드 테스트2",
+  "content": "테스트2",
+  "worker": "김현진"
+}
+
+### 7-2. 카드 제목 수정
+PUT http://localhost:8080/api/cards/1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "title": "수정 테스트"
+}
+
+### 7-3. 카드 순서 이동
+PUT http://localhost:8080/api/cards/10/move?position=1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 7-4. 카드 컬럼 이동
+PUT http://localhost:8080/api/column/3/cards/1/move
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 7-5. 카드 삭제
+DELETE http://localhost:8080/api/cards/2
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 7-6. 카드 전체 조회
+GET http://localhost:8080/api/cards
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 7-7. 카드 작업자별 조회
+GET http://localhost:8080/api/cards/worker?worker=김예찬
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 7-8. 카드 컬럼별 조회
+GET http://localhost:8080/api/cards/column?column=3
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
