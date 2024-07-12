@@ -23,7 +23,7 @@ public class CommentService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
 
-    public CommentResponseDto createCommnet(Long cardId, @Valid CommentRequestDto commentRequestDto, User user) {
+    public CommentResponseDto createCommnet(Long cardId, CommentRequestDto commentRequestDto, User user) {
 
         User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
@@ -33,17 +33,6 @@ public class CommentService {
 
         validateBoardOwnership(foundCard, foundUser);
 
-        if (!foundCard.getColumnInfo().getBoard().getUser().getId().equals(foundUser.getId())) {
-
-            List<Long> userIdList = foundCard.getColumnInfo().getBoard().getInvites().stream()
-                    .map(Invite -> Invite.getInvitedUser().getId())
-                    .toList();
-
-            if (!userIdList.contains(user.getId())) {
-                throw new BadRequestException("보드에 권한이 없습니다.");
-            }
-
-        }
 
         Comment comment = new Comment(commentRequestDto, foundCard, foundUser);
 
