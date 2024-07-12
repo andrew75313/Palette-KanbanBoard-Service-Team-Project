@@ -24,13 +24,27 @@ public class Card extends Timestamped {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @Column
+    private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
+    @Column
+    private String deadLineDate;
+
+    @Column
+    private String worker;
+
+    @Column
+    private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ColumnInfo columnInfo;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Card.Status status;
+
+    public enum Status {
+        ACTIVE,
+        DELETED;
+    }
 }
