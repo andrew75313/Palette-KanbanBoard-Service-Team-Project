@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 @Getter
 public class InviteResponseDto {
 
-    private Long inviteId;
-    private String username;
+    private final Long inviteId;
+    private final String username;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime modifiedAt;
+    private final LocalDateTime modifiedAt;
 
     public InviteResponseDto(Invite invite)
     {

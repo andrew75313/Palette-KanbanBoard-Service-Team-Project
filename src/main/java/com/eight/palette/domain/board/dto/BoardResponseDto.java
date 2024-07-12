@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 @Getter
 public class BoardResponseDto {
 
-    private Long boardId;
-    private String username;
-    private String title;
-    private String intro;
+    private final Long boardId;
+    private final String username;
+    private final String title;
+    private final String intro;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime modifiedAt;
+    private final LocalDateTime modifiedAt;
 
     public BoardResponseDto(Board board)
     {

@@ -30,8 +30,7 @@ public class BoardController {
     {
 
         BoardResponseDto responseDto = boardService.createBoard(userPrincipal.getUser(), requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new DataResponse<>(HttpStatus.CREATED.value(),"보드 생성 성공 📝", responseDto ));
+        return ResponseEntity.ok(new DataResponse<>(HttpStatus.CREATED.value(),"보드 생성 성공 📝", responseDto ));
 
     }
 
@@ -42,8 +41,7 @@ public class BoardController {
     {
 
         BoardResponseDto responseDto = boardService.updateBoard(userPrincipal.getUser(), boardId, requestDto);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new DataResponse<>(HttpStatus.OK.value(),"보드 수정 성공 📝", responseDto));
+        return ResponseEntity.ok(new DataResponse<>(HttpStatus.OK.value(),"보드 수정 성공 📝", responseDto));
 
     }
 
@@ -53,8 +51,7 @@ public class BoardController {
     {
 
         boardService.deleteBoard(userPrincipal.getUser(), boardId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new MessageResponse(HttpStatus.OK.value(),"보드 삭제 성공 📝"));
+        return ResponseEntity.ok(new MessageResponse(HttpStatus.OK.value(),"보드 삭제 성공 📝"));
 
     }
 
@@ -64,8 +61,7 @@ public class BoardController {
 
         int defaultSize = 5;
         Page<BoardResponseDto> responseDto = boardService.getBoard(userPrincipal.getUser(), page - 1, defaultSize);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new DataResponse<>(HttpStatus.OK.value(), "보드 "+page+"번 페이지 조회 성공 📝", responseDto));
+        return ResponseEntity.ok(new DataResponse<>(HttpStatus.OK.value(), "보드 "+page+"번 페이지 조회 성공 📝", responseDto));
     }
 
 
@@ -76,8 +72,7 @@ public class BoardController {
     {
 
         boardService.inviteBoard(userPrincipal.getUser(), boardId, requestDto.getInvitedUserId());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new MessageResponse(HttpStatus.OK.value(), "사용자 초대 성공 👨‍👨‍👧‍👦"));
+        return ResponseEntity.ok(new MessageResponse(HttpStatus.OK.value(), "사용자 초대 성공 👨‍👨‍👧‍👦"));
 
     }
 
