@@ -33,9 +33,9 @@ public class CommentService {
 
         validateBoardOwnership(foundCard, foundUser);
 
-        if (!foundCard.getBoard().getUser().getId().equals(foundUser.getId())) {
+        if (!foundCard.getColumnInfo().getBoard().getUser().getId().equals(foundUser.getId())) {
 
-            List<Long> userIdList = foundCard.getBoard().getInvites().stream()
+            List<Long> userIdList = foundCard.getColumnInfo().getBoard().getInvites().stream()
                     .map(Invite -> Invite.getInvitedUser().getId())
                     .toList();
 
@@ -86,9 +86,9 @@ public class CommentService {
 
     public void validateBoardOwnership(Card card, User user) {
 
-        if (!card.getBoard().getUser().getId().equals(user.getId())) {
+        if (!card.getColumnInfo().getBoard().getUser().getId().equals(user.getId())) {
 
-            List<Long> userIdList = card.getBoard().getInvites().stream()
+            List<Long> userIdList = card.getColumnInfo().getBoard().getInvites().stream()
                     .map(Invite -> Invite.getInvitedUser().getId())
                     .toList();
 
