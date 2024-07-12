@@ -41,7 +41,7 @@ public class ColumnInfoController {
 
     }
 
-    @PostMapping("/boards/{boardId}/columns/{columnId}/move")
+    @PutMapping("/boards/{boardId}/columns/{columnId}/move")
     public ResponseEntity<MessageResponse> moveColumn(@PathVariable(name = "boardId") Long boardId,
                                                       @PathVariable(name = "columnId") Long columnInfoId,
                                                       @RequestParam(name = "position") Integer newPosition,
