@@ -1,8 +1,6 @@
 package com.eight.palette.domain.card.entity;
 
-import com.eight.palette.domain.board.entity.Board;
 import com.eight.palette.domain.column.entity.ColumnInfo;
-import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,13 +22,43 @@ public class Card extends Timestamped {
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @Column
+    private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
+    @Column
+    private String deadLineDate;
+
+    @Column
+    private String worker;
+
+    @Column
+    private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ColumnInfo columnInfo;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Card.Status status;
+
+    public enum Status {
+        ACTIVE,
+        DELETED;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePosition(int position) {
+        this.position = position;
+    }
+
+    public void updateColumn(ColumnInfo columnInfo) {
+        this.columnInfo = columnInfo;
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
 }
