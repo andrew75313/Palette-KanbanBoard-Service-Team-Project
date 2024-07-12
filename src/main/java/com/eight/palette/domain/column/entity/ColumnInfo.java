@@ -30,12 +30,37 @@ public class ColumnInfo extends Timestamped {
     @Column
     private Integer position;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
     @OneToMany(mappedBy = "columnInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cardList = new ArrayList<>();
+
+    public enum Status {
+
+        ACTIVE,
+        DELETED;
+    }
+
+    public void delete() {
+
+        this.status = Status.DELETED;
+    }
+
+    public void active() {
+
+        this.status = Status.ACTIVE;
+    }
+
+    public boolean isActive() {
+
+        return this.status == Status.ACTIVE;
+    }
 
     public ColumnInfo(ColumnInfoRequestDto columnInfoRequestDto, Board board) {
 
