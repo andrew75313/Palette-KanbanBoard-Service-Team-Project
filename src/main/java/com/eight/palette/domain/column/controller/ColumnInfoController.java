@@ -20,7 +20,7 @@ public class ColumnInfoController {
 
     private final ColumnInfoService columnInfoService;
 
-    @PostMapping("/manager/boards/{boardId}/columns")
+    @PostMapping("/boards/{boardId}/columns")
     public ResponseEntity<DataResponse<ColumnInfoResponseDto>> createColumn(@PathVariable(name = "boardId") Long boardId,
                                                                             @Valid @RequestBody ColumnInfoRequestDto columnInfoRequestDto,
                                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -33,7 +33,7 @@ public class ColumnInfoController {
 
     }
 
-    @DeleteMapping("/manager/boards/{boardId}/columns/{columnsId}")
+    @DeleteMapping("/boards/{boardId}/columns/{columnsId}")
     public ResponseEntity<MessageResponse> deleteColumn(@PathVariable(name = "boardId") Long boardId,
                                                         @PathVariable(name = "columnsId") Long columnInfoId,
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -44,7 +44,7 @@ public class ColumnInfoController {
 
     }
 
-    @PostMapping("/manager/boards/{boardId}/columns/{columnsId}/move")
+    @PostMapping("/boards/{boardId}/columns/{columnsId}/move")
     public ResponseEntity<MessageResponse> moveColumn(@PathVariable(name = "boardId") Long boardId,
                                                       @PathVariable(name = "columnsId") Long columnInfoId,
                                                       @RequestParam(name = "position") Integer newPosition,
