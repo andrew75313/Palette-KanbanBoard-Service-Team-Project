@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -28,4 +30,15 @@ public class CommentController {
         return ResponseEntity.ok(new DataResponse<>(200, "댓글 생성 성공 \uD83C\uDCCF", responseDto));
 
     }
+
+    @GetMapping("/cards/{cardId}/comments")
+    public ResponseEntity<DataResponse<List<CommentResponseDto>>> getComments(@PathVariable(name = "cardId") Long cardId,
+                                                                              @AuthenticationPrincipal UserDetailsImpl userDetail) {
+
+        List<CommentResponseDto> responseDtoList = commentService.getComments(cardId, userDetail.getUser());
+
+        return ResponseEntity.ok(new DataResponse<>(200, "댓글 조회 성공 \uD83C\uDCCF", responseDtoList));
+
+    }
+
 }
