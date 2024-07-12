@@ -47,4 +47,8 @@ public class Card extends Timestamped {
         ACTIVE,
         DELETED;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }

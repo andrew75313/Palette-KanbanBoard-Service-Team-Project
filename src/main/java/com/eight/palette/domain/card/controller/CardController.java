@@ -29,4 +29,10 @@ public class CardController {
                 new DataResponse<>(200, "카드 생성 성공", cardService.createCard(columnId, requestDto)));
     }
 
+    @PutMapping("/cards/{cardId}")
+    public ResponseEntity<DataResponse<CardResponseDto>> updateCard(@PathVariable("cardId") Long cardId,
+                                                                    @Valid @RequestBody CardRequestDto requestDto) {
+        return ResponseEntity.ok(
+                new DataResponse<>(200, "카드 수정 성공", cardService.updateCard(cardId, requestDto)));
+    }
 }

@@ -8,6 +8,7 @@ import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.repository.ColumnsRepository;
 import com.eight.palette.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CardService {
@@ -52,4 +53,18 @@ public class CardService {
 
     }
 
+    @Transactional
+    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
+
+        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
+                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
+        );
+
+        foundCard.updateTitle(requestDto.getTitle());
+
+        cardRepository.save(foundCard);
+
+        return new CardResponseDto(foundCard);
+
+    }
 }
