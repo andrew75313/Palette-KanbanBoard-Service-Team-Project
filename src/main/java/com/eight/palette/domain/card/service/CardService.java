@@ -59,9 +59,7 @@ public class CardService {
     @Transactional
     public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
-                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
-        );
+        Card foundCard = findCard(cardId);
 
         foundCard.updateTitle(requestDto.getTitle());
 
@@ -74,9 +72,7 @@ public class CardService {
     @Transactional
     public void moveCard(Long cardId, Integer newPosition) {
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
-                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
-        );
+        Card foundCard = findCard(cardId);
 
         if (foundCard.getPosition() == newPosition) {
             return;
@@ -101,9 +97,7 @@ public class CardService {
     @Transactional
     public void moveColumnCard(Long columnId, Long cardId) {
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
-                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
-        );
+        Card foundCard = findCard(cardId);
 
         ColumnInfo newColumn = columnsRepository.findById(columnId).orElseThrow(()
                 -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
@@ -126,9 +120,7 @@ public class CardService {
     @Transactional
     public void deleteCard(Long cardId) {
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
-                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
-        );
+        Card foundCard = findCard(cardId);
 
         if (foundCard.getStatus() == Card.Status.DELETED) {
             throw new BadRequestException("이미 삭제된 카드입니다.");
@@ -137,6 +129,20 @@ public class CardService {
         foundCard.delete();
 
         cardRepository.save(foundCard);
+
+    }
+
+    public Card findCard(Long cardId) {
+
+        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
+                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
+        );
+
+        if (foundCard.getStatus() == Card.Status.DELETED) {
+            throw new BadRequestException("이미 삭제된 카드입니다.");
+        }
+
+        return foundCard;
 
     }
 }

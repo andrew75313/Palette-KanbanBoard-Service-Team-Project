@@ -25,14 +25,14 @@ public class CardController {
                                                                     @Valid @RequestBody CardRequestDto requestDto) {
 
         return ResponseEntity.ok(
-                new DataResponse<>(200, "카드 생성 성공", cardService.createCard(columnId, requestDto)));
+                new DataResponse<>(201, "카드 생성 성공 \uD83C\uDCCF", cardService.createCard(columnId, requestDto)));
     }
 
     @PutMapping("/cards/{cardId}")
     public ResponseEntity<DataResponse<CardResponseDto>> updateCard(@PathVariable("cardId") Long cardId,
                                                                     @Valid @RequestBody CardRequestDto requestDto) {
         return ResponseEntity.ok(
-                new DataResponse<>(200, "카드 수정 성공", cardService.updateCard(cardId, requestDto)));
+                new DataResponse<>(200, "카드 수정 성공 \uD83C\uDCCF", cardService.updateCard(cardId, requestDto)));
     }
 
     @PutMapping("/cards/{cardId}/move")
@@ -42,7 +42,7 @@ public class CardController {
         cardService.moveCard(cardId, newPosition);
 
         return ResponseEntity.ok(
-                new MessageResponse(200, "카드 순서 변경 성공"));
+                new MessageResponse(200, "카드 순서 변경 성공 \uD83C\uDCCF"));
     }
 
     @PutMapping("/column/{columnId}/cards/{cardId}/move")
@@ -52,7 +52,7 @@ public class CardController {
         cardService.moveColumnCard(columnId, cardId);
 
         return ResponseEntity.ok(
-                new MessageResponse(200, "카드 순서 변경 성공"));
+                new MessageResponse(200, "카드 순서 변경 성공 \uD83C\uDCCF"));
     }
 
     @DeleteMapping("/cards/{cardId}")
@@ -61,6 +61,6 @@ public class CardController {
         cardService.deleteCard(cardId);
 
         return ResponseEntity.ok(
-                new MessageResponse(200, "카드 삭제 성공"));
+                new MessageResponse(200, "카드 삭제 성공 \uD83C\uDCCF"));
     }
 }

@@ -1,8 +1,6 @@
 package com.eight.palette.domain.card.entity;
 
-import com.eight.palette.domain.board.entity.Board;
 import com.eight.palette.domain.column.entity.ColumnInfo;
-import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
