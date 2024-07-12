@@ -29,9 +29,7 @@ public class CommentService {
                 () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
         );
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(
-                () -> new BadRequestException("해당 카드는 존재하지 않습니다.")
-        );
+        Card foundCard = validateCard(cardId);
 
         validateBoardOwnership(foundCard, foundUser);
 
@@ -61,9 +59,7 @@ public class CommentService {
                 () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
         );
 
-        Card foundCard = cardRepository.findById(cardId).orElseThrow(
-                () -> new BadRequestException("해당 카드는 존재하지 않습니다.")
-        );
+        Card foundCard = validateCard(cardId);
 
         validateBoardOwnership(foundCard, foundUser);
 
@@ -73,6 +69,19 @@ public class CommentService {
 
         return responseDtoList;
 
+    }
+
+    public Card validateCard(Long cardId) {
+
+        Card foundCard = cardRepository.findById(cardId).orElseThrow(
+                () -> new BadRequestException("해당 카드는 존재하지 않습니다.")
+        );
+
+        if (foundCard.getStatus() == Card.Status.DELETED) {
+            throw new BadRequestException("이미 삭제된 카드입니다.");
+        }
+
+        return foundCard;
     }
 
     public void validateBoardOwnership(Card card, User user) {
