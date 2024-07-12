@@ -4,6 +4,7 @@ import com.eight.palette.domain.card.dto.CardRequestDto;
 import com.eight.palette.domain.card.dto.CardResponseDto;
 import com.eight.palette.domain.card.service.CardService;
 import com.eight.palette.global.dto.DataResponse;
+import com.eight.palette.global.dto.MessageResponse;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +35,15 @@ public class CardController {
                                                                     @Valid @RequestBody CardRequestDto requestDto) {
         return ResponseEntity.ok(
                 new DataResponse<>(200, "카드 수정 성공", cardService.updateCard(cardId, requestDto)));
+    }
+
+    @PutMapping("/cards/{cardId}/move")
+    public ResponseEntity<MessageResponse> moveCard(@PathVariable("cardId") Long cardId,
+                                                    @RequestParam("position") Integer newPosition) {
+
+        cardService.moveCard(cardId, newPosition);
+
+        return ResponseEntity.ok(
+                new MessageResponse(200, "카드 순서 변경 성공"));
     }
 }

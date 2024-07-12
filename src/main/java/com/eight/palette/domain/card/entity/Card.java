@@ -51,4 +51,8 @@ public class Card extends Timestamped {
     public void updateTitle(String title) {
         this.title = title;
     }
+
+    public void updatePosition(int position) {
+        this.position = position;
+    }
 }
