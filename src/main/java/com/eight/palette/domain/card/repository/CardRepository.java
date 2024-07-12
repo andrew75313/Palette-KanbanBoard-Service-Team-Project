@@ -11,4 +11,6 @@ import java.util.List;
 public interface CardRepository extends JpaRepository<Card, Long> {
 
     List<Card> findByColumnInfo(ColumnInfo columnInfo);
+    List<Card> findAllByWorker(String worker);
+    List<Card> findAllByColumnInfo(ColumnInfo columnInfo);
 }

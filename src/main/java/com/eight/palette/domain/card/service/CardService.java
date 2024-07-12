@@ -145,4 +145,32 @@ public class CardService {
         return foundCard;
 
     }
+
+    public List<CardResponseDto> getAllCards() {
+
+        List<Card> cardList = cardRepository.findAll();
+
+        return cardList.stream().map(CardResponseDto::new).toList();
+
+    }
+
+    public List<CardResponseDto> getCardsByWorker(String worker) {
+
+        List<Card> cardList = cardRepository.findAllByWorker(worker);
+
+        return cardList.stream().map(CardResponseDto::new).toList();
+
+    }
+
+    public List<CardResponseDto> getCardsByColumn(Long columnId) {
+
+        ColumnInfo column = columnsRepository.findById(columnId).orElseThrow(()
+                -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
+        );
+
+        List<Card> cardList = cardRepository.findAllByColumnInfo(column);
+
+        return cardList.stream().map(CardResponseDto::new).toList();
+
+    }
 }

@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api")
@@ -62,5 +64,23 @@ public class CardController {
 
         return ResponseEntity.ok(
                 new MessageResponse(200, "카드 삭제 성공 \uD83C\uDCCF"));
+    }
+
+    @GetMapping("/cards")
+    public ResponseEntity<DataResponse<List<CardResponseDto>>> getAllCards() {
+        return ResponseEntity.ok(
+                new DataResponse<>(200, "카드 조회 성공 \uD83C\uDCCF", cardService.getAllCards()));
+    }
+
+    @GetMapping("/cards/worker")
+    public ResponseEntity<DataResponse<List<CardResponseDto>>> getCardsByWorker(@RequestParam("worker") String worker) {
+        return ResponseEntity.ok(
+                new DataResponse<>(200, "카드 조회 성공 \uD83C\uDCCF", cardService.getCardsByWorker(worker)));
+    }
+
+    @GetMapping("/cards/column")
+    public ResponseEntity<DataResponse<List<CardResponseDto>>> getCardsByColumn(@RequestParam("column") Long columnId) {
+        return ResponseEntity.ok(
+                new DataResponse<>(200, "카드 조회 성공 \uD83C\uDCCF", cardService.getCardsByColumn(columnId)));
     }
 }
