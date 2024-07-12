@@ -6,11 +6,9 @@ import com.eight.palette.domain.card.service.CardService;
 import com.eight.palette.global.dto.DataResponse;
 import com.eight.palette.global.dto.MessageResponse;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -55,5 +53,14 @@ public class CardController {
 
         return ResponseEntity.ok(
                 new MessageResponse(200, "카드 순서 변경 성공"));
+    }
+
+    @DeleteMapping("/cards/{cardId}")
+    public ResponseEntity<MessageResponse> deleteCard(@PathVariable("cardId") Long cardId) {
+
+        cardService.deleteCard(cardId);
+
+        return ResponseEntity.ok(
+                new MessageResponse(200, "카드 삭제 성공"));
     }
 }

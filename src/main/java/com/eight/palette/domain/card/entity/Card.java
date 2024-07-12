@@ -59,4 +59,8 @@ public class Card extends Timestamped {
     public void updateColumn(ColumnInfo columnInfo) {
         this.columnInfo = columnInfo;
     }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
 }

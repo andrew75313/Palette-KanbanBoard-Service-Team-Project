@@ -6,6 +6,7 @@ import com.eight.palette.domain.card.entity.Card;
 import com.eight.palette.domain.card.repository.CardRepository;
 import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.repository.ColumnsRepository;
+import com.eight.palette.global.exception.BadRequestException;
 import com.eight.palette.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -120,5 +121,22 @@ public class CardService {
         foundCard.updatePosition(position);
 
         cardRepository.save(foundCard);
+    }
+
+    @Transactional
+    public void deleteCard(Long cardId) {
+
+        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
+                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
+        );
+
+        if (foundCard.getStatus() == Card.Status.DELETED) {
+            throw new BadRequestException("이미 삭제된 카드입니다.");
+        }
+
+        foundCard.delete();
+
+        cardRepository.save(foundCard);
+
     }
 }
