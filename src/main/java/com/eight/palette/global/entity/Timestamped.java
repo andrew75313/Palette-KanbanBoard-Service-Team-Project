@@ -23,4 +23,9 @@ public abstract class Timestamped {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
 
+    public enum Status {
+        ACTIVE,
+        DELETED;
+    }
+
 }
