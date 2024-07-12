@@ -1,0 +1,13 @@
+### 8-1. 댓글 생성
+POST http://localhost:8080/api/cards/1/comments
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "comment": "댓글테스트"
+}
+
+### 8-2. 댓글 조회
+GET http://localhost:8080/api/cards/1/comments
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
