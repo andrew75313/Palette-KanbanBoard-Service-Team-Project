@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class ColumnInfoResponseDto {
 
-    private Long id;
-    private String status;
+    private final Long id;
+    private final String status;
 
     public ColumnInfoResponseDto(ColumnInfo columnInfo) {
 
