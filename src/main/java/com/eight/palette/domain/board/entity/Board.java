@@ -37,11 +37,6 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private Status status;
 
-    public enum Status {
-        ACTIVE,
-        DELETED;
-    }
-
     public void delete() {
         this.status = Status.DELETED;
     }

@@ -4,6 +4,7 @@ import com.eight.palette.domain.board.dto.BoardRequestDto;
 import com.eight.palette.domain.board.dto.BoardResponseDto;
 import com.eight.palette.domain.board.entity.Board;
 import com.eight.palette.domain.board.repository.BoardRepository;
+import com.eight.palette.domain.column.service.ColumnInfoService;
 import com.eight.palette.domain.invite.Repository.InviteRepository;
 import com.eight.palette.domain.invite.entity.Invite;
 import com.eight.palette.domain.user.entity.User;
@@ -25,11 +26,13 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final InviteRepository inviteRepository;
+    private final ColumnInfoService columnInfoService;
 
-    public BoardService(BoardRepository boardRepository, UserRepository userRepository, InviteRepository inviteRepository) {
+    public BoardService(BoardRepository boardRepository, UserRepository userRepository, InviteRepository inviteRepository, ColumnInfoService columnInfoService) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.inviteRepository = inviteRepository;
+        this.columnInfoService = columnInfoService;
     }
 
     public BoardResponseDto createBoard(User user, BoardRequestDto requestDto) {
@@ -46,6 +49,7 @@ public class BoardService {
                 .build();
 
         boardRepository.save(board);
+        columnInfoService.setupInitialColumns(board);
 
         return new BoardResponseDto(board);
 
