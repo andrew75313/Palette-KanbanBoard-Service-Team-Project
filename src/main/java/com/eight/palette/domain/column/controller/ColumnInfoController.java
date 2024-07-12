@@ -27,9 +27,7 @@ public class ColumnInfoController {
 
         ColumnInfoResponseDto responseDto = columnInfoService.createColumn(boardId, columnInfoRequestDto, userDetails.getUser());
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new DataResponse<>(HttpStatus.CREATED.value(),"컬럼 생성 성공 \uD83C\uDF89", responseDto ));
-
+        return ResponseEntity.ok(new DataResponse<>(201, "컬럼 생성 성공 \uD83C\uDF89", responseDto));
 
     }
 
@@ -40,7 +38,7 @@ public class ColumnInfoController {
 
         columnInfoService.deleteColumn(boardId, columnInfoId, userDetails.getUser());
 
-        return ResponseEntity.status(200).body(new MessageResponse(200, "컬럼 삭제 성공 \uD83C\uDF89"));
+        return ResponseEntity.ok(new MessageResponse(200, "컬럼 삭제 성공 \uD83C\uDF89"));
 
     }
 
@@ -52,9 +50,8 @@ public class ColumnInfoController {
 
         columnInfoService.moveColumn(boardId, columnInfoId, newPosition, userDetails.getUser());
 
-        return ResponseEntity.status(200).body(new MessageResponse(200, "컬럼 순서 변경 성공 \uD83C\uDF89"));
+        return ResponseEntity.ok(new MessageResponse(200, "컬럼 순서 변경 성공 \uD83C\uDF89"));
 
     }
-
 
 }
