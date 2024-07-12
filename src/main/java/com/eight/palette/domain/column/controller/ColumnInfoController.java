@@ -33,9 +33,9 @@ public class ColumnInfoController {
 
     }
 
-    @DeleteMapping("/boards/{boardId}/columns/{columnsId}")
+    @DeleteMapping("/boards/{boardId}/columns/{columnId}")
     public ResponseEntity<MessageResponse> deleteColumn(@PathVariable(name = "boardId") Long boardId,
-                                                        @PathVariable(name = "columnsId") Long columnInfoId,
+                                                        @PathVariable(name = "columnId") Long columnInfoId,
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         columnInfoService.deleteColumn(boardId, columnInfoId, userDetails.getUser());
@@ -44,9 +44,9 @@ public class ColumnInfoController {
 
     }
 
-    @PostMapping("/boards/{boardId}/columns/{columnsId}/move")
+    @PostMapping("/boards/{boardId}/columns/{columnId}/move")
     public ResponseEntity<MessageResponse> moveColumn(@PathVariable(name = "boardId") Long boardId,
-                                                      @PathVariable(name = "columnsId") Long columnInfoId,
+                                                      @PathVariable(name = "columnId") Long columnInfoId,
                                                       @RequestParam(name = "position") Integer newPosition,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
