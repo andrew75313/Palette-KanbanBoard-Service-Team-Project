@@ -37,8 +37,8 @@ public class ColumnInfoService {
 
         Board foundBoard = validateBoardOwnership(boardId, foundUser);
 
-        List<String> foundColumnStatuses = columnsRepository.findByBoardId(boardId).stream()
-                .map(ColumnInfo::getStatus).toList();
+        List<String> foundColumnStatuses = columnsRepository.findActiveColumnsByBoardIdOrderByPosition(boardId).stream()
+                .map(ColumnInfo::getStatusName).toList();
 
         Set<String> requiredStatuses = new HashSet<>();
         requiredStatuses.add(RequiredStatus.UPCOMING.getColumnStatus());
@@ -51,7 +51,7 @@ public class ColumnInfoService {
             }
         }
 
-        if (foundColumnStatuses.contains(columnInfoResponseDto.getStatus())) {
+        if (foundColumnStatuses.contains(columnInfoResponseDto.getStatusName())) {
             throw new BadRequestException("중복된 상태 이름입니다.");
         }
 
@@ -59,12 +59,15 @@ public class ColumnInfoService {
 
         columnInfo.updatePosition(foundColumnStatuses.size() + 1);
 
+        columnInfo.active();
+
         columnsRepository.save(columnInfo);
 
         return new ColumnInfoResponseDto(columnInfo);
 
     }
 
+    @Transactional
     public void deleteColumn(Long boardId, Long columnInfoId, User user) {
 
         User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
@@ -73,9 +76,7 @@ public class ColumnInfoService {
 
         validateBoardOwnership(boardId, foundUser);
 
-        ColumnInfo foundColumn = columnsRepository.findById(columnInfoId).orElseThrow(
-                () -> new BadRequestException("해당 컬럼은 존재하지 않습니다.")
-        );
+        ColumnInfo foundColumn = validateColumnInfo(columnInfoId);
 
         if (foundColumn.getBoard().getId() != boardId) {
             throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
@@ -86,11 +87,13 @@ public class ColumnInfoService {
         requiredStatuses.add(RequiredStatus.IN_PROGRESS.getColumnStatus());
         requiredStatuses.add(RequiredStatus.DONE.getColumnStatus());
 
-        if (requiredStatuses.contains(foundColumn.getStatus())) {
+        if (requiredStatuses.contains(foundColumn.getStatusName())) {
             throw new BadRequestException("필수 컬럼은 삭제할 수 없습니다.");
         }
 
-        columnsRepository.delete(foundColumn);
+        foundColumn.delete();
+
+        columnsRepository.save(foundColumn);
 
     }
 
@@ -103,9 +106,7 @@ public class ColumnInfoService {
 
         validateBoardOwnership(boardId, foundUser);
 
-        ColumnInfo foundColumn = columnsRepository.findById(columnInfoId).orElseThrow(
-                () -> new BadRequestException("해당 컬럼은 존재하지 않습니다.")
-        );
+        ColumnInfo foundColumn = validateColumnInfo(columnInfoId);
 
         if (foundColumn.getBoard().getId() != boardId) {
             throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
@@ -115,7 +116,7 @@ public class ColumnInfoService {
             return;
         }
 
-        List<ColumnInfo> columnList = columnsRepository.findByBoardIdOrderByPosition(boardId);
+        List<ColumnInfo> columnList = columnsRepository.findActiveColumnsByBoardIdOrderByPosition(boardId);
 
         newPosition = newPosition > columnList.size() ? columnList.size() : newPosition;
 
@@ -140,28 +141,45 @@ public class ColumnInfoService {
     public void setupInitialColumns(Board board) {
 
         ColumnInfo upcomingColumn = ColumnInfo.builder()
-                .status(RequiredStatus.UPCOMING.getColumnStatus())
+                .statusName(RequiredStatus.UPCOMING.getColumnStatus())
                 .position(1)
+                .status(ColumnInfo.Status.ACTIVE)
                 .board(board)
                 .build();
 
         columnsRepository.save(upcomingColumn);
 
         ColumnInfo inProgressColumn = ColumnInfo.builder()
-                .status(RequiredStatus.IN_PROGRESS.getColumnStatus())
+                .statusName(RequiredStatus.IN_PROGRESS.getColumnStatus())
                 .position(2)
+                .status(ColumnInfo.Status.ACTIVE)
                 .board(board)
                 .build();
 
         columnsRepository.save(inProgressColumn);
 
         ColumnInfo doneColumn = ColumnInfo.builder()
-                .status(RequiredStatus.DONE.getColumnStatus())
+                .statusName(RequiredStatus.DONE.getColumnStatus())
                 .position(3)
+                .status(ColumnInfo.Status.ACTIVE)
                 .board(board)
                 .build();
 
         columnsRepository.save(doneColumn);
+
+    }
+
+    public ColumnInfo validateColumnInfo(Long columnInfoId) {
+
+        ColumnInfo foundColumn = columnsRepository.findById(columnInfoId).orElseThrow(
+                () -> new BadRequestException("해당 컬럼은 존재하지 않습니다.")
+        );
+
+        if (!foundColumn.isActive()) {
+            throw new BadRequestException("이미 삭제된 컬럼입니다.");
+        }
+
+        return foundColumn;
 
     }
 

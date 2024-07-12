@@ -4,7 +4,7 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 {
-  "status": "상태이름테스트"
+  "statusName": "상태이름테스트"
 }
 
 ### 6-2. 컬럼 삭제

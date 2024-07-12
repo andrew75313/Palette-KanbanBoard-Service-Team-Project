@@ -49,6 +49,7 @@ public class BoardService {
                 .build();
 
         boardRepository.save(board);
+        columnInfoService.setupInitialColumns(board);
 
         columnInfoService.setupInitialColumns(board);
 

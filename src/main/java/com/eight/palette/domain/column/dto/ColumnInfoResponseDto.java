@@ -7,12 +7,12 @@ import lombok.Getter;
 public class ColumnInfoResponseDto {
 
     private final Long id;
-    private final String status;
+    private final String statusName;
 
     public ColumnInfoResponseDto(ColumnInfo columnInfo) {
 
         this.id = columnInfo.getId();
-        this.status = columnInfo.getStatus();
+        this.statusName = columnInfo.getStatusName();
 
     }
 }
