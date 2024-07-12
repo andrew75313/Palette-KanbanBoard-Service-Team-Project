@@ -55,4 +55,8 @@ public class Card extends Timestamped {
     public void updatePosition(int position) {
         this.position = position;
     }
+
+    public void updateColumn(ColumnInfo columnInfo) {
+        this.columnInfo = columnInfo;
+    }
 }

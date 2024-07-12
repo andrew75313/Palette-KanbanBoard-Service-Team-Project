@@ -96,4 +96,29 @@ public class CardService {
         cardRepository.save(card);
 
     }
+
+    @Transactional
+    public void moveColumnCard(Long columnId, Long cardId) {
+
+        Card foundCard = cardRepository.findById(cardId).orElseThrow(()
+                -> new NotFoundException("해당 카드를 찾지 못했습니다.")
+        );
+
+        ColumnInfo newColumn = columnsRepository.findById(columnId).orElseThrow(()
+                -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
+        );
+
+        foundCard.updateColumn(newColumn);
+
+        int cardSize = newColumn.getCardList().size();
+        int position = 1;
+
+        if(cardSize != 0) {
+            position = cardSize + 1;
+        }
+
+        foundCard.updatePosition(position);
+
+        cardRepository.save(foundCard);
+    }
 }

@@ -46,4 +46,14 @@ public class CardController {
         return ResponseEntity.ok(
                 new MessageResponse(200, "카드 순서 변경 성공"));
     }
+
+    @PutMapping("/column/{columnId}/cards/{cardId}/move")
+    public ResponseEntity<MessageResponse> moveColumnCard(@PathVariable("columnId") Long columnId,
+                                                          @PathVariable("cardId") Long cardId) {
+
+        cardService.moveColumnCard(columnId, cardId);
+
+        return ResponseEntity.ok(
+                new MessageResponse(200, "카드 순서 변경 성공"));
+    }
 }
