@@ -7,6 +7,6 @@ import lombok.Getter;
 public class ColumnInfoRequestDto {
 
     @NotBlank(message = "상태 이름을 입력해주세요.")
-    private String status;
+    private String statusName;
 
 }

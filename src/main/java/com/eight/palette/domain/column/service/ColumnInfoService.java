@@ -38,7 +38,7 @@ public class ColumnInfoService {
         Board foundBoard = validateBoardOwnership(boardId, foundUser);
 
         List<String> foundColumnStatuses = columnsRepository.findByBoardId(boardId).stream()
-                .map(ColumnInfo::getStatus).toList();
+                .map(ColumnInfo::getStatusName).toList();
 
         Set<String> requiredStatuses = new HashSet<>();
         requiredStatuses.add(RequiredStatus.UPCOMING.getColumnStatus());
@@ -51,7 +51,7 @@ public class ColumnInfoService {
             }
         }
 
-        if (foundColumnStatuses.contains(columnInfoResponseDto.getStatus())) {
+        if (foundColumnStatuses.contains(columnInfoResponseDto.getStatusName())) {
             throw new BadRequestException("중복된 상태 이름입니다.");
         }
 
@@ -86,7 +86,7 @@ public class ColumnInfoService {
         requiredStatuses.add(RequiredStatus.IN_PROGRESS.getColumnStatus());
         requiredStatuses.add(RequiredStatus.DONE.getColumnStatus());
 
-        if (requiredStatuses.contains(foundColumn.getStatus())) {
+        if (requiredStatuses.contains(foundColumn.getStatusName())) {
             throw new BadRequestException("필수 컬럼은 삭제할 수 없습니다.");
         }
 
@@ -140,7 +140,7 @@ public class ColumnInfoService {
     public void setupInitialColumns(Board board) {
 
         ColumnInfo upcomingColumn = ColumnInfo.builder()
-                .status(RequiredStatus.UPCOMING.getColumnStatus())
+                .statusName(RequiredStatus.UPCOMING.getColumnStatus())
                 .position(1)
                 .board(board)
                 .build();
@@ -148,7 +148,7 @@ public class ColumnInfoService {
         columnsRepository.save(upcomingColumn);
 
         ColumnInfo inProgressColumn = ColumnInfo.builder()
-                .status(RequiredStatus.IN_PROGRESS.getColumnStatus())
+                .statusName(RequiredStatus.IN_PROGRESS.getColumnStatus())
                 .position(2)
                 .board(board)
                 .build();
@@ -156,7 +156,7 @@ public class ColumnInfoService {
         columnsRepository.save(inProgressColumn);
 
         ColumnInfo doneColumn = ColumnInfo.builder()
-                .status(RequiredStatus.DONE.getColumnStatus())
+                .statusName(RequiredStatus.DONE.getColumnStatus())
                 .position(3)
                 .board(board)
                 .build();

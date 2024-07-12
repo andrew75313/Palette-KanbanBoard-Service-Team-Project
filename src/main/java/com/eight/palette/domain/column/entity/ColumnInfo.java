@@ -25,7 +25,7 @@ public class ColumnInfo extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private String status;
+    private String statusName;
 
     @Column
     private Integer position;
@@ -39,7 +39,7 @@ public class ColumnInfo extends Timestamped {
 
     public ColumnInfo(ColumnInfoRequestDto columnInfoRequestDto, Board board) {
 
-        this.status = columnInfoRequestDto.getStatus();
+        this.statusName = columnInfoRequestDto.getStatusName();
         this.board = board;
     }
 
