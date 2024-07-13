@@ -11,24 +11,28 @@ import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.domain.user.repository.UserRepository;
 import com.eight.palette.global.exception.BadRequestException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 public class ColumnInfoService {
 
     private final ColumnsRepository columnsRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
+    public ColumnInfoService(ColumnsRepository columnsRepository, UserRepository userRepository, BoardRepository boardRepository) {
+        this.columnsRepository = columnsRepository;
+        this.userRepository = userRepository;
+        this.boardRepository = boardRepository;
+    }
+
     public ColumnInfoResponseDto createColumn(Long boardId,
-                                              @Valid ColumnInfoRequestDto columnInfoResponseDto,
+                                              ColumnInfoRequestDto columnInfoResponseDto,
                                               User user) {
 
         User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
@@ -40,10 +44,9 @@ public class ColumnInfoService {
         List<String> foundColumnStatuses = columnsRepository.findActiveColumnsByBoardIdOrderByPosition(boardId).stream()
                 .map(ColumnInfo::getStatusName).toList();
 
-        Set<String> requiredStatuses = new HashSet<>();
-        requiredStatuses.add(RequiredStatus.UPCOMING.getColumnStatus());
-        requiredStatuses.add(RequiredStatus.IN_PROGRESS.getColumnStatus());
-        requiredStatuses.add(RequiredStatus.DONE.getColumnStatus());
+        Set<String> requiredStatuses = Stream.of(RequiredStatus.values())
+                .map(RequiredStatus::getColumnStatus)
+                .collect(Collectors.toSet());
 
         for (String requiredStatus : requiredStatuses) {
             if (!foundColumnStatuses.contains(requiredStatus)) {
@@ -55,11 +58,12 @@ public class ColumnInfoService {
             throw new BadRequestException("중복된 상태 이름입니다.");
         }
 
-        ColumnInfo columnInfo = new ColumnInfo(columnInfoResponseDto, foundBoard);
-
-        columnInfo.updatePosition(foundColumnStatuses.size() + 1);
-
-        columnInfo.active();
+        ColumnInfo columnInfo = ColumnInfo.builder()
+                .statusName(columnInfoResponseDto.getStatusName())
+                .position(foundColumnStatuses.size() + 1)
+                .status(ColumnInfo.Status.ACTIVE)
+                .board(foundBoard)
+                .build();
 
         columnsRepository.save(columnInfo);
 
@@ -82,10 +86,9 @@ public class ColumnInfoService {
             throw new BadRequestException("해당 컬럼은 보드에 존재하지 않습니다.");
         }
 
-        Set<String> requiredStatuses = new HashSet<>();
-        requiredStatuses.add(RequiredStatus.UPCOMING.getColumnStatus());
-        requiredStatuses.add(RequiredStatus.IN_PROGRESS.getColumnStatus());
-        requiredStatuses.add(RequiredStatus.DONE.getColumnStatus());
+        Set<String> requiredStatuses = Stream.of(RequiredStatus.values())
+                .map(RequiredStatus::getColumnStatus)
+                .collect(Collectors.toSet());
 
         if (requiredStatuses.contains(foundColumn.getStatusName())) {
             throw new BadRequestException("필수 컬럼은 삭제할 수 없습니다.");

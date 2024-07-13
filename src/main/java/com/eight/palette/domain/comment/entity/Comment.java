@@ -1,6 +1,7 @@
 package com.eight.palette.domain.comment.entity;
 
 import com.eight.palette.domain.card.entity.Card;
+import com.eight.palette.domain.comment.dto.CommentRequestDto;
 import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.global.entity.Timestamped;
 import jakarta.persistence.*;
