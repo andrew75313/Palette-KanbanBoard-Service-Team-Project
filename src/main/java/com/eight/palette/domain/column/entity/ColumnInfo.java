@@ -62,12 +62,6 @@ public class ColumnInfo extends Timestamped {
         return this.status == Status.ACTIVE;
     }
 
-    public ColumnInfo(ColumnInfoRequestDto columnInfoRequestDto, Board board) {
-
-        this.statusName = columnInfoRequestDto.getStatusName();
-        this.board = board;
-    }
-
     public void updatePosition(Integer newOrder) {
 
         this.position = newOrder;
