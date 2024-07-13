@@ -30,11 +30,4 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public Comment(CommentRequestDto commentRequestDto, Card card, User user) {
-
-        this.comment = commentRequestDto.getComment();
-        this.card = card;
-        this.user = user;
-    }
-
 }

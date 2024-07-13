@@ -15,10 +15,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
+
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @PostMapping("/cards/{cardId}/comments")
     public ResponseEntity<DataResponse<CommentResponseDto>> createComment(@PathVariable(name = "cardId") Long cardId,
@@ -37,7 +40,8 @@ public class CommentController {
 
         List<CommentResponseDto> responseDtoList = commentService.getComments(cardId, userDetail.getUser());
 
-        return ResponseEntity.ok(new DataResponse<>(200, "댓글 조회 성공 \uD83C\uDCCF", responseDtoList));
+        return ResponseEntity.ok(
+                new DataResponse<>(200, "댓글 조회 성공 \uD83C\uDCCF", responseDtoList));
 
     }
 
