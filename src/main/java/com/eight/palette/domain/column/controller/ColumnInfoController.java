@@ -7,17 +7,19 @@ import com.eight.palette.domain.user.entity.UserDetailsImpl;
 import com.eight.palette.global.dto.DataResponse;
 import com.eight.palette.global.dto.MessageResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class ColumnInfoController {
 
     private final ColumnInfoService columnInfoService;
+
+    public ColumnInfoController(ColumnInfoService columnInfoService) {
+        this.columnInfoService = columnInfoService;
+    }
 
     @PostMapping("/boards/{boardId}/columns")
     public ResponseEntity<DataResponse<ColumnInfoResponseDto>> createColumn(@PathVariable(name = "boardId") Long boardId,

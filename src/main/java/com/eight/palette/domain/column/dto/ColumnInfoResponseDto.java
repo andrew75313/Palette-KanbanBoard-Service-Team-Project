@@ -15,4 +15,5 @@ public class ColumnInfoResponseDto {
         this.statusName = columnInfo.getStatusName();
 
     }
+
 }
