@@ -8,6 +8,7 @@ import com.eight.palette.domain.user.entity.UserRoleEnum;
 import com.eight.palette.domain.user.repository.UserRepository;
 import com.eight.palette.global.exception.BadRequestException;
 import com.eight.palette.global.jwt.JwtProvider;
+import com.eight.palette.global.redis.RedisService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final RedisService redisService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, RedisService redisService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.redisService = redisService;
     }
 
     @Value("${custom.manage-key}")
@@ -53,35 +56,35 @@ public class UserService {
     public LoginResponseDto login(LoginRequestDto requestDto) {
 
         final User user = userRepository.findByUsername(requestDto.getUsername())
-                .orElseThrow(() -> new RuntimeException("해당 유저는 존재하지 않습니다."));
+                .orElseThrow(() -> new BadRequestException("해당 유저는 존재하지 않습니다."));
 
         final String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole());
         final String refreshToken = jwtProvider.createRefreshToken(user.getUsername());
-
-        userRepository.setTokenValue(user.getId(), refreshToken);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new BadRequestException("패스워드가 일치하지 않습니다.");
         }
 
-        return new LoginResponseDto(accessToken, refreshToken, user.getUsername());
+        LoginResponseDto responseDto = new LoginResponseDto(accessToken, refreshToken, user.getUsername());
+
+        redisService.setValue(user.getUsername(),responseDto);
+
+        return responseDto;
 
     }
 
-    public LoginResponseDto tokenRefresh(String refreshToken) {
-
-        if (!jwtProvider.validateRefreshToken(refreshToken)) {
-            throw new BadRequestException("유효하지 않은 토큰 입니다 재로그인 해주세요.");
-        }
-        final String username = jwtProvider.getUsernameFromToken(refreshToken);
+    public LoginResponseDto tokenRefresh(String username) {
 
         final User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new BadRequestException("해당유저가 없습니다."));
 
         final String accessToken = jwtProvider.createAccessToken(user.getUsername(),user.getRole());
         final String refreshTokenValue = jwtProvider.createRefreshToken(username);
+        final LoginResponseDto responseDto = new LoginResponseDto(accessToken, refreshTokenValue, user.getUsername());
 
-        return new LoginResponseDto(accessToken, refreshTokenValue, username);
+        redisService.setValue(user.getUsername(),responseDto);
+
+        return responseDto;
 
     }
 
@@ -91,7 +94,7 @@ public class UserService {
             throw new BadRequestException("다른 유저가 시도했습니다.");
         }
 
-        userRepository.setTokenValue(user.getId(), "");
+        redisService.deleteValue(user.getUsername());
 
     }
 
