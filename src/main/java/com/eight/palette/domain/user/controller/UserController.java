@@ -51,9 +51,9 @@ public class UserController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<DataResponse<LoginResponseDto>> tokenRefresh (@Valid @RequestBody RefreshTokenDto refreshTokenDto){
+    public ResponseEntity<DataResponse<LoginResponseDto>> tokenRefresh (@AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        LoginResponseDto responseDto = userService.tokenRefresh(refreshTokenDto.getRefreshToken());
+        LoginResponseDto responseDto = userService.tokenRefresh(userDetails.getUser().getUsername());
 
         return ResponseEntity.ok(new DataResponse<>
                 (200, "재 로그인 성공 \uD83C\uDF89",responseDto));
