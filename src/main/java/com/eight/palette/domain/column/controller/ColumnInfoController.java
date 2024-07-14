@@ -28,7 +28,18 @@ public class ColumnInfoController {
 
         ColumnInfoResponseDto responseDto = columnInfoService.createColumn(boardId, columnInfoRequestDto, userDetails.getUser());
 
-        return ResponseEntity.ok(new DataResponse<>(201, "컬럼 생성 성공 \uD83C\uDF89", responseDto));
+        return ResponseEntity.ok(new DataResponse<>(200, "컬럼 생성 성공 \uD83C\uDF89", responseDto));
+
+    }
+
+    @GetMapping("/boards/{boardId}/columns/{columnId}")
+    public ResponseEntity<DataResponse<ColumnInfoResponseDto>> getColumn(@PathVariable(name = "boardId") Long boardId,
+                                                                         @PathVariable(name = "columnId") Long columnInfoId,
+                                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        ColumnInfoResponseDto responseDto = columnInfoService.getColumn(boardId, columnInfoId, userDetails.getUser());
+
+        return ResponseEntity.ok(new DataResponse<>(200, "컬럼 조회 성공 \uD83C\uDF89", responseDto));
 
     }
 

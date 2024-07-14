@@ -71,6 +71,20 @@ public class ColumnInfoService {
 
     }
 
+    public ColumnInfoResponseDto getColumn(Long boardId, Long columnInfoId, User user) {
+
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
+                () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
+        );
+
+        validateBoardOwnership(boardId, foundUser);
+
+        ColumnInfo foundColumn = validateColumnInfo(columnInfoId);
+
+        return new ColumnInfoResponseDto(foundColumn);
+
+    }
+
     @Transactional
     public void deleteColumn(Long boardId, Long columnInfoId, User user) {
 
