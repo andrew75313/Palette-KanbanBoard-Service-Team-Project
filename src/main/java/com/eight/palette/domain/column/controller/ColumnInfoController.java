@@ -2,6 +2,7 @@ package com.eight.palette.domain.column.controller;
 
 import com.eight.palette.domain.column.dto.ColumnInfoRequestDto;
 import com.eight.palette.domain.column.dto.ColumnInfoResponseDto;
+import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.service.ColumnInfoService;
 import com.eight.palette.domain.user.entity.UserDetailsImpl;
 import com.eight.palette.global.dto.DataResponse;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -53,6 +56,11 @@ public class ColumnInfoController {
 
         return ResponseEntity.ok(new MessageResponse(200, "컬럼 순서 변경 성공 \uD83C\uDF89"));
 
+    }
+
+    @GetMapping("/board/{boardId}/columns")
+    public ResponseEntity<List<ColumnInfo>> getColumns (@PathVariable(name = "boardId") Long boardId) {
+        return ResponseEntity.ok(columnInfoService.getColumns(boardId));
     }
 
 }

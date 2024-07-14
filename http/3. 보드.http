@@ -21,7 +21,7 @@ Authorization: Bearer {{access_token}}
 
 ### 3-3. 보드 삭제
 
-DELETE http://localhost:8080/api/boards/2
+DELETE http://localhost:8080/api/boards/7
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

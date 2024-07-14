@@ -44,6 +44,6 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ### 7-8. 카드 컬럼별 조회
-GET http://localhost:8080/api/cards/column?column=3
+GET http://localhost:8080/api/cards/column?column=15
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
