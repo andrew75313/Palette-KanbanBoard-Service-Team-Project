@@ -78,9 +78,11 @@ public class CardService {
             return;
         }
 
-        List<Card> cardList = cardRepository.findByColumnInfo(foundCard.getColumnInfo());
+        List<Card> cardList = cardRepository.findAllByColumnInfoAndStatusOrderByPositionAsc(foundCard.getColumnInfo(), Card.Status.ACTIVE);
 
-        Card card = cardList.stream().filter(c -> c.getPosition() == newPosition).findAny().orElseThrow();
+        Card card = cardList.stream().filter(c -> c.getPosition() == newPosition).findAny().orElseThrow(
+                () -> new BadRequestException("해당 위치로는 옮길 수 없습니다.")
+        );
 
         int temp = newPosition;
 
@@ -148,7 +150,7 @@ public class CardService {
 
     public List<CardResponseDto> getAllCards() {
 
-        List<Card> cardList = cardRepository.findAll();
+        List<Card> cardList = cardRepository.findAllByStatus(Card.Status.ACTIVE);
 
         return cardList.stream().map(CardResponseDto::new).toList();
 
@@ -156,7 +158,7 @@ public class CardService {
 
     public List<CardResponseDto> getCardsByWorker(String worker) {
 
-        List<Card> cardList = cardRepository.findAllByWorker(worker);
+        List<Card> cardList = cardRepository.findAllByWorkerAndStatus(worker, Card.Status.ACTIVE);
 
         return cardList.stream().map(CardResponseDto::new).toList();
 
@@ -168,7 +170,7 @@ public class CardService {
                 -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
         );
 
-        List<Card> cardList = cardRepository.findAllByColumnInfo(column);
+        List<Card> cardList = cardRepository.findAllByColumnInfoAndStatusOrderByPositionAsc(column, Card.Status.ACTIVE);
 
         return cardList.stream().map(CardResponseDto::new).toList();
 

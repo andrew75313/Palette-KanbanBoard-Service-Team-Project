@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
 
-    List<Card> findByColumnInfo(ColumnInfo columnInfo);
-    List<Card> findAllByWorker(String worker);
-    List<Card> findAllByColumnInfo(ColumnInfo columnInfo);
+    List<Card> findAllByWorkerAndStatus(String worker, Card.Status status);
+    List<Card> findAllByColumnInfoAndStatusOrderByPositionAsc(ColumnInfo columnInfo, Card.Status status);
+    List<Card> findAllByStatus(Card.Status status);
 }
