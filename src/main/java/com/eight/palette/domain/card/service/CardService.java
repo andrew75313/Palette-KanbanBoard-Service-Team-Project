@@ -6,6 +6,7 @@ import com.eight.palette.domain.card.entity.Card;
 import com.eight.palette.domain.card.repository.CardRepository;
 import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.repository.ColumnsRepository;
+import com.eight.palette.global.config.RedissonConfig;
 import com.eight.palette.global.exception.BadRequestException;
 import com.eight.palette.global.exception.NotFoundException;
 import org.redisson.api.RLock;
@@ -36,32 +37,34 @@ public class CardService {
 
         RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
-        ColumnInfo columnInfo = columnsRepository.findById(columnId).orElseThrow(()
-                -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
-        );
-
-        int cardSize = columnInfo.getCardList().size();
-        int position = 1;
-
-        if (cardSize != 0) {
-            position = cardSize + 1;
-        }
-
-        Card card = Card.builder()
-                .title(requestDto.getTitle())
-                .content(requestDto.getContent())
-                .deadLineDate(requestDto.getDeadLineDate())
-                .worker(requestDto.getWorker())
-                .columnInfo(columnInfo)
-                .status(Card.Status.ACTIVE)
-                .position(position)
-                .build();
-
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
+                    ColumnInfo columnInfo = columnsRepository.findById(columnId).orElseThrow(()
+                            -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
+                    );
+
+                    int cardSize = columnInfo.getCardList().size();
+                    int position = 1;
+
+                    if (cardSize != 0) {
+                        position = cardSize + 1;
+                    }
+
+                    Card card = Card.builder()
+                            .title(requestDto.getTitle())
+                            .content(requestDto.getContent())
+                            .deadLineDate(requestDto.getDeadLineDate())
+                            .worker(requestDto.getWorker())
+                            .columnInfo(columnInfo)
+                            .status(Card.Status.ACTIVE)
+                            .position(position)
+                            .build();
+
                     cardRepository.save(card);
+
+                    return new CardResponseDto(card);
                 } finally {
                     lock.unlock();
                 }
@@ -73,7 +76,6 @@ public class CardService {
             throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
         }
 
-        return new CardResponseDto(card);
     }
 
     @Transactional
@@ -84,7 +86,7 @@ public class CardService {
         Card foundCard = findCard(cardId);
 
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
                     foundCard.updateTitle(requestDto.getTitle());
@@ -110,16 +112,16 @@ public class CardService {
 
         RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
-        Card foundCard = findCard(cardId);
-
-        if (foundCard.getPosition() == newPosition) {
-            return;
-        }
-
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
+                    Card foundCard = findCard(cardId);
+
+                    if (foundCard.getPosition() == newPosition) {
+                        return;
+                    }
+
                     List<Card> cardList = cardRepository.findAllByColumnInfoAndStatusOrderByPositionAsc(foundCard.getColumnInfo(), Card.Status.ACTIVE);
 
                     Card card = cardList.stream().filter(c -> c.getPosition() == newPosition).findAny().orElseThrow(
@@ -160,7 +162,7 @@ public class CardService {
         );
 
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
                     foundCard.updateColumn(newColumn);
@@ -200,7 +202,7 @@ public class CardService {
         }
 
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
                     foundCard.delete();

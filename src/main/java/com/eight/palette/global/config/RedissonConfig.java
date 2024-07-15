@@ -18,6 +18,10 @@ public class RedissonConfig {
 
     private static final String REDISSON_PREFIX = "redis://";
 
+    public static final Long WAIT_TIME = 30L;
+
+    public static final Long LEASE_TIME = 10L;
+
     @Bean
     public RedissonClient redissonClient() {
 

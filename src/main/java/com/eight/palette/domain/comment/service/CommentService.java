@@ -8,6 +8,7 @@ import com.eight.palette.domain.comment.entity.Comment;
 import com.eight.palette.domain.comment.repository.CommentRepository;
 import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.domain.user.repository.UserRepository;
+import com.eight.palette.global.config.RedissonConfig;
 import com.eight.palette.global.exception.BadRequestException;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -52,7 +53,7 @@ public class CommentService {
                 .build();
 
         try {
-            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(RedissonConfig.WAIT_TIME, RedissonConfig.LEASE_TIME, TimeUnit.SECONDS);
             if (isLocked) {
                 try {
                     commentRepository.save(comment);
