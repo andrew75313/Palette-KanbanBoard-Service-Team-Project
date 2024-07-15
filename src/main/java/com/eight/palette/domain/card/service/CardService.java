@@ -8,26 +8,33 @@ import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.repository.ColumnsRepository;
 import com.eight.palette.global.exception.BadRequestException;
 import com.eight.palette.global.exception.NotFoundException;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CardService {
 
     private final CardRepository cardRepository;
     private final ColumnsRepository columnsRepository;
+    private final RedissonClient redissonClient;
 
+    private static final String LOCK_KEY = "cardLock";
 
-    public CardService(CardRepository cardRepository, ColumnsRepository columnsRepository) {
+    public CardService(CardRepository cardRepository, ColumnsRepository columnsRepository, RedissonClient redissonClient) {
 
         this.cardRepository = cardRepository;
         this.columnsRepository = columnsRepository;
-
+        this.redissonClient = redissonClient;
     }
 
     public CardResponseDto createCard(Long columnId, CardRequestDto requestDto) {
+
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
         ColumnInfo columnInfo = columnsRepository.findById(columnId).orElseThrow(()
                 -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
@@ -36,7 +43,7 @@ public class CardService {
         int cardSize = columnInfo.getCardList().size();
         int position = 1;
 
-        if(cardSize != 0) {
+        if (cardSize != 0) {
             position = cardSize + 1;
         }
 
@@ -50,20 +57,49 @@ public class CardService {
                 .position(position)
                 .build();
 
-        cardRepository.save(card);
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    cardRepository.save(card);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
+        }
 
         return new CardResponseDto(card);
-
     }
 
     @Transactional
     public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
 
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
+
         Card foundCard = findCard(cardId);
 
-        foundCard.updateTitle(requestDto.getTitle());
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    foundCard.updateTitle(requestDto.getTitle());
 
-        cardRepository.save(foundCard);
+                    cardRepository.save(foundCard);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
+        }
 
         return new CardResponseDto(foundCard);
 
@@ -72,32 +108,50 @@ public class CardService {
     @Transactional
     public void moveCard(Long cardId, Integer newPosition) {
 
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
+
         Card foundCard = findCard(cardId);
 
         if (foundCard.getPosition() == newPosition) {
             return;
         }
 
-        List<Card> cardList = cardRepository.findAllByColumnInfoAndStatusOrderByPositionAsc(foundCard.getColumnInfo(), Card.Status.ACTIVE);
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    List<Card> cardList = cardRepository.findAllByColumnInfoAndStatusOrderByPositionAsc(foundCard.getColumnInfo(), Card.Status.ACTIVE);
 
-        Card card = cardList.stream().filter(c -> c.getPosition() == newPosition).findAny().orElseThrow(
-                () -> new BadRequestException("해당 위치로는 옮길 수 없습니다.")
-        );
+                    Card card = cardList.stream().filter(c -> c.getPosition() == newPosition).findAny().orElseThrow(
+                            () -> new BadRequestException("해당 위치로는 옮길 수 없습니다.")
+                    );
 
-        int temp = newPosition;
+                    int temp = newPosition;
 
-        card.updatePosition(foundCard.getPosition());
+                    card.updatePosition(foundCard.getPosition());
 
-        foundCard.updatePosition(temp);
+                    foundCard.updatePosition(temp);
 
-        cardRepository.save(foundCard);
+                    cardRepository.save(foundCard);
 
-        cardRepository.save(card);
+                    cardRepository.save(card);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
+        }
 
     }
 
     @Transactional
     public void moveColumnCard(Long columnId, Long cardId) {
+
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
         Card foundCard = findCard(cardId);
 
@@ -105,22 +159,39 @@ public class CardService {
                 -> new NotFoundException("해당 컬럼을 찾지 못했습니다.")
         );
 
-        foundCard.updateColumn(newColumn);
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    foundCard.updateColumn(newColumn);
 
-        int cardSize = newColumn.getCardList().size();
-        int position = 1;
+                    int cardSize = newColumn.getCardList().size();
+                    int position = 1;
 
-        if(cardSize != 0) {
-            position = cardSize + 1;
+                    if (cardSize != 0) {
+                        position = cardSize + 1;
+                    }
+
+                    foundCard.updatePosition(position);
+
+                    cardRepository.save(foundCard);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
         }
 
-        foundCard.updatePosition(position);
-
-        cardRepository.save(foundCard);
     }
 
     @Transactional
     public void deleteCard(Long cardId) {
+
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
         Card foundCard = findCard(cardId);
 
@@ -128,9 +199,23 @@ public class CardService {
             throw new BadRequestException("이미 삭제된 카드입니다.");
         }
 
-        foundCard.delete();
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    foundCard.delete();
 
-        cardRepository.save(foundCard);
+                    cardRepository.save(foundCard);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
+        }
 
     }
 
