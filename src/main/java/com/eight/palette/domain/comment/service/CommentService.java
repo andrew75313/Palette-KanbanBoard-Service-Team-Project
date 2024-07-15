@@ -9,9 +9,12 @@ import com.eight.palette.domain.comment.repository.CommentRepository;
 import com.eight.palette.domain.user.entity.User;
 import com.eight.palette.domain.user.repository.UserRepository;
 import com.eight.palette.global.exception.BadRequestException;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CommentService {
@@ -19,14 +22,20 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final RedissonClient redissonClient;
 
-    public CommentService(CommentRepository commentRepository, CardRepository cardRepository, UserRepository userRepository) {
+    public CommentService(CommentRepository commentRepository, CardRepository cardRepository, UserRepository userRepository, RedissonClient redissonClient) {
         this.commentRepository = commentRepository;
         this.cardRepository = cardRepository;
         this.userRepository = userRepository;
+        this.redissonClient = redissonClient;
     }
 
+    private static final String LOCK_KEY = "commentLock";
+
     public CommentResponseDto createCommnet(Long cardId, CommentRequestDto commentRequestDto, User user) {
+
+        RLock lock = redissonClient.getFairLock(LOCK_KEY);
 
         User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
                 () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
@@ -42,7 +51,21 @@ public class CommentService {
                 .user(foundUser)
                 .build();
 
-        commentRepository.save(comment);
+        try {
+            boolean isLocked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+            if (isLocked) {
+                try {
+                    commentRepository.save(comment);
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                throw new BadRequestException("다시 시도해 주세요.(Lock 얻기 실패)");
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new BadRequestException("다시 시도해 주세요.(작업 실패)");
+        }
 
         return new CommentResponseDto(comment);
 
