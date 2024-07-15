@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class ColumnInfoController {
@@ -38,6 +40,16 @@ public class ColumnInfoController {
                                                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         ColumnInfoResponseDto responseDto = columnInfoService.getColumn(boardId, columnInfoId, userDetails.getUser());
+
+        return ResponseEntity.ok(new DataResponse<>(200, "컬럼 조회 성공 \uD83C\uDF89", responseDto));
+
+    }
+
+    @GetMapping("/boards/{boardId}/columns")
+    public ResponseEntity<DataResponse<List<ColumnInfoResponseDto>>> getAllColumns(@PathVariable(name = "boardId") Long boardId,
+                                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        List<ColumnInfoResponseDto> responseDto = columnInfoService.getAllColumns(boardId, userDetails.getUser());
 
         return ResponseEntity.ok(new DataResponse<>(200, "컬럼 조회 성공 \uD83C\uDF89", responseDto));
 
