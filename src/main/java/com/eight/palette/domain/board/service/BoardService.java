@@ -136,6 +136,16 @@ public class BoardService {
         inviteRepository.save(invite);
     }
 
+    public BoardResponseDto getBoardInfo(Long id) {
+       Board board = boardRepository.findById(id).orElse(null);
+
+       if(board == null) {
+           throw new BadRequestException("해당 보드는 존재하지 않습니다");
+       }
+
+        return new BoardResponseDto(board);
+    }
+
     public Board getBoards(User user, Long boardId) {
 
         Board board = boardRepository.findById(boardId).orElseThrow(()
@@ -146,9 +156,9 @@ public class BoardService {
             throw new BadRequestException("이미 삭제된 보드입니다.");
         }
 
-        if (!board.getUser().getId().equals(user.getId())) {
-            throw new BadRequestException("다른 사용자의 보드입니다.");
-        }
+//        if (!board.getUser().getId().equals(user.getId())) {
+//            throw new BadRequestException("다른 사용자의 보드입니다.");
+//        }
 
         return board;
 

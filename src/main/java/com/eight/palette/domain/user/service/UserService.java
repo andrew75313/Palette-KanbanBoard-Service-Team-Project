@@ -88,11 +88,7 @@ public class UserService {
 
     }
 
-    public void logout(Long id, User user) {
-
-        if (!user.getId().equals(id)) {
-            throw new BadRequestException("다른 유저가 시도했습니다.");
-        }
+    public void logout(User user) {
 
         redisService.deleteValue(user.getUsername());
 

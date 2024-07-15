@@ -2,6 +2,7 @@ package com.eight.palette.domain.column.controller;
 
 import com.eight.palette.domain.column.dto.ColumnInfoRequestDto;
 import com.eight.palette.domain.column.dto.ColumnInfoResponseDto;
+import com.eight.palette.domain.column.entity.ColumnInfo;
 import com.eight.palette.domain.column.service.ColumnInfoService;
 import com.eight.palette.domain.user.entity.UserDetailsImpl;
 import com.eight.palette.global.dto.DataResponse;

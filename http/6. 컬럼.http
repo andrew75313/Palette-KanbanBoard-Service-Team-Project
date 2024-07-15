@@ -13,7 +13,12 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ### 6-3. 컬럼 이동
-PUT http://localhost:8080/api/boards/1/columns/3/move?position=1
+PUT http://localhost:8080/api/boards/8/columns/27/move?position=1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+### 6-4 컬럼 조회
+GET http://localhost:8080/api/board/11/columns
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

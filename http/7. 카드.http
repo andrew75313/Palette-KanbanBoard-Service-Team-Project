@@ -1,5 +1,5 @@
 ### 7-1. 카드 생성
-POST http://localhost:8080/api/column/3/cards
+POST http://localhost:8080/api/column/30/cards
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -24,7 +24,7 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ### 7-4. 카드 컬럼 이동
-PUT http://localhost:8080/api/column/3/cards/1/move
+PUT http://localhost:8080/api/column/46/cards/17/move
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -44,6 +44,6 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ### 7-8. 카드 컬럼별 조회
-GET http://localhost:8080/api/cards/column?column=3
+GET http://localhost:8080/api/cards/column?column=30
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
