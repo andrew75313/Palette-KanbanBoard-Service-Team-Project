@@ -140,11 +140,6 @@ public class ColumnInfoService {
 
     }
 
-    public List<ColumnInfo> getColumns(Long boardId) {
-        return columnsRepository.findActiveColumnsByBoardIdOrderByPosition(boardId);
-    }
-
-
     @Transactional
     public void setupInitialColumns(Board board) {
 
@@ -197,9 +192,9 @@ public class ColumnInfoService {
                 () -> new BadRequestException("해당 보드는 존재하지 않습니다.")
         );
 
-//        if (foundBoard.getUser().getId() != user.getId()) {
-//            throw new BadRequestException("보드 권한이 없습니다.");
-//        }
+        if (foundBoard.getUser().getId() != user.getId()) {
+            throw new BadRequestException("보드 권한이 없습니다.");
+        }
 
         return foundBoard;
 

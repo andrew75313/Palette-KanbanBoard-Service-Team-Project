@@ -40,11 +40,10 @@ public class UserController {
 
     }
 
-    @PostMapping("/logout/{id}")
-    public ResponseEntity<MessageResponse> logout(@PathVariable Long id,
-                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/logout")
+    public ResponseEntity<MessageResponse> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        userService.logout(id,userDetails.getUser());
+        userService.logout(userDetails.getUser());
 
         return ResponseEntity.ok(new MessageResponse(204, "로그아웃 성공 \uD83C\uDF89"));
 
