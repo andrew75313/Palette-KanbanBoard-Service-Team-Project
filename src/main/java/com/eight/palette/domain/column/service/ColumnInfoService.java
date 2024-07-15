@@ -71,6 +71,38 @@ public class ColumnInfoService {
 
     }
 
+    public ColumnInfoResponseDto getColumn(Long boardId, Long columnInfoId, User user) {
+
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
+                () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
+        );
+
+        validateBoardOwnership(boardId, foundUser);
+
+        ColumnInfo foundColumn = validateColumnInfo(columnInfoId);
+
+        return new ColumnInfoResponseDto(foundColumn);
+
+    }
+
+    public List<ColumnInfoResponseDto> getAllColumns(Long boardId, User user) {
+
+        User foundUser = userRepository.findByUsername(user.getUsername()).orElseThrow(
+                () -> new BadRequestException("해당 사용자는 존재하지 않습니다.")
+        );
+
+        validateBoardOwnership(boardId, foundUser);
+
+        List<ColumnInfo> columnInfoList = columnsRepository.findActiveColumnsByBoardIdOrderByPosition(boardId);
+
+        List<ColumnInfoResponseDto> responseList = columnInfoList.stream()
+                .map(ColumnInfoResponseDto::new)
+                .toList();
+
+        return responseList;
+
+    }
+
     @Transactional
     public void deleteColumn(Long boardId, Long columnInfoId, User user) {
 
