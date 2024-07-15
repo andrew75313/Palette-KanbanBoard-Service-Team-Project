@@ -13,6 +13,7 @@ public class CardResponseDto {
     private final String content;
     private final String deadLineDate;
     private final String worker;
+    private final Integer position;
     private final Long columnId;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
@@ -26,6 +27,7 @@ public class CardResponseDto {
         this.columnId = card.getColumnInfo().getId();
         this.createdAt = card.getCreatedAt();
         this.modifiedAt = card.getModifiedAt();
+        this.position = card.getPosition();
     }
 }
 

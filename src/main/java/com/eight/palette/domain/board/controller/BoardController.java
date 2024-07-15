@@ -2,6 +2,7 @@ package com.eight.palette.domain.board.controller;
 
 import com.eight.palette.domain.board.dto.BoardRequestDto;
 import com.eight.palette.domain.board.dto.BoardResponseDto;
+import com.eight.palette.domain.board.entity.Board;
 import com.eight.palette.domain.board.service.BoardService;
 import com.eight.palette.domain.invite.dto.InviteRequestDto;
 import com.eight.palette.domain.user.entity.UserDetailsImpl;
@@ -74,6 +75,11 @@ public class BoardController {
         boardService.inviteBoard(userPrincipal.getUser(), boardId, requestDto.getInvitedUserId());
         return ResponseEntity.ok(new MessageResponse(HttpStatus.OK.value(), "사용자 초대 성공 👨‍👨‍👧‍👦"));
 
+    }
+
+    @GetMapping("/boards/{boardId}")
+    public ResponseEntity<BoardResponseDto> getBoardInfo (@PathVariable Long boardId){
+        return ResponseEntity.ok(boardService.getBoardInfo(boardId));
     }
 
 }
