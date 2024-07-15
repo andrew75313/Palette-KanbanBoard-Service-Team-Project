@@ -24,7 +24,7 @@ Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ### 7-4. 카드 컬럼 이동
-PUT http://localhost:8080/api/column/3/cards/1/move
+PUT http://localhost:8080/api/column/46/cards/17/move
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 

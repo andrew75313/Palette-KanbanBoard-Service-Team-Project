@@ -79,9 +79,4 @@ public class ColumnInfoController {
 
     }
 
-    @GetMapping("/board/{boardId}/columns")
-    public ResponseEntity<List<ColumnInfo>> getColumns (@PathVariable(name = "boardId") Long boardId) {
-        return ResponseEntity.ok(columnInfoService.getColumns(boardId));
-    }
-
 }

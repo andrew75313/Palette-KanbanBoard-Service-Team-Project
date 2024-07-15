@@ -136,8 +136,14 @@ public class BoardService {
         inviteRepository.save(invite);
     }
 
-    public Board getBoardInfo(Long id) {
-        return boardRepository.findById(id).orElse(null);
+    public BoardResponseDto getBoardInfo(Long id) {
+       Board board = boardRepository.findById(id).orElse(null);
+
+       if(board == null) {
+           throw new BadRequestException("해당 보드는 존재하지 않습니다");
+       }
+
+        return new BoardResponseDto(board);
     }
 
     public Board getBoards(User user, Long boardId) {
